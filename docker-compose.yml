@@ -1,0 +1,42 @@
+volumes:
+  postgres_data:
+  cache_data:
+  minio_data:
+
+networks:
+  default:
+    name: mejora_default
+
+services:
+  postgres:
+    container_name: mejora_postgres
+    image: postgres:14.6-alpine
+    restart: always
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: 12341234
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ACCESS_KEY: "BEUPieICtWSo1RfNQD5u"
+      MINIO_SECRET_KEY: "p88YHPaMsjLoQwUoq7606JiJAEXPwpldo1YACoiN"
+      MINIO_ROOT_USER: "minio"
+      MINIO_ROOT_PASSWORD: "m1n1orts"
+    command: server --console-address ":9001" /data
+  
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - 1025:1025
+      - 8025:8025

@@ -46,6 +46,7 @@ defmodule Mejora.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.14"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
@@ -85,7 +86,6 @@ defmodule Mejora.MixProject do
       {:ex_env, "~> 0.3.1"},
       {:ex_machina, "~> 2.7"},
       {:gen_enum, "~> 0.4.1"},
-      {:guardian, "~> 2.1"},
       {:libcluster_ec2, "0.6.0"},
       {:libcluster, "~> 3.3"},
       {:number, "~> 1.0.0"},
@@ -96,6 +96,10 @@ defmodule Mejora.MixProject do
       {:ecto_fragment_extras, "~> 0.3.0"},
       {:ecto_ltree, "~> 0.4.0"},
       {:gen_smtp, "~> 1.1"},
+      {:comeonin, "~> 5.3"},
+      {:guardian, "~> 2.0"},
+      {:argon2_elixir, "~> 3.0"},
+      {:hammer, "~> 6.1"},
 
       # Development
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},

@@ -58,6 +58,15 @@ defmodule MejoraWeb do
     end
   end
 
+  def salad_ui_live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {MejoraWeb.Layouts, :app}
+
+      unquote(salad_ui_html_helpers())
+    end
+  end
+
   def live_component do
     quote do
       use Phoenix.LiveComponent
@@ -75,7 +84,36 @@ defmodule MejoraWeb do
         only: [get_csrf_token: 0, view_module: 1, view_template: 1]
 
       # Include general helpers for rendering HTML
-      unquote(html_helpers())
+      unquote(salad_ui_html_helpers())
+    end
+  end
+
+  defp salad_ui_html_helpers do
+    quote do
+      # HTML escaping functionality
+      import Phoenix.HTML
+      import MejoraWeb.Gettext
+
+      import MejoraWeb.CoreComponents, only: [flash_group: 1]
+
+      import MejoraWeb.Component.{
+        Avatar,
+        Badge,
+        Button,
+        Card,
+        DropdownMenu,
+        Icon,
+        Input,
+        Menu,
+        Sheet,
+        Table
+      }
+
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
     end
   end
 
@@ -84,7 +122,9 @@ defmodule MejoraWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MejoraWeb.CoreComponents, only: [flash_group: 1]
+      import MejoraWeb.CoreComponents,
+        only: [flash_group: 1, header: 1, input: 1, simple_form: 1, error: 1, button: 1]
+
       import MejoraWeb.Gettext
 
       # Shortcut for generating JS commands

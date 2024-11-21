@@ -12,6 +12,97 @@
     </script>
   </head>
   <body class="bg-white">
+    <header class="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      <nav
+        :if={Mejora.RBAC.has_permission?(@current_user, "view_stats")}
+        class="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6"
+      >
+        <.link
+          href={~p"/admin/dashboard"}
+          class="flex items-center gap-2 text-lg font-semibold md:text-base"
+        >
+          <.icon name="hero-rectangle-stack" class="h-6 w-6" />
+          <span class="sr-only">Acme Inc</span>
+        </.link>
+        <.link
+          href={~p"/admin/dashboard"}
+          class="text-foreground transition-colors hover:text-foreground"
+        >
+          Dashboard
+        </.link>
+      </nav>
+
+      <.sheet :if={Mejora.RBAC.has_permission?(@current_user, "view_stats")}>
+        <.sheet_trigger target="sheet-content">
+          <.button variant="outline" size="icon" class="shrink-0 md:hidden">
+            <.icon name="hero-bars-3" class="h-5 w-5" />
+            <span class="sr-only">Toggle navigation menu</span>
+          </.button>
+        </.sheet_trigger>
+
+        <.sheet_content side="left" id="sheet-content">
+          <nav class="grid gap-6 text-lg font-medium">
+            <.link href="#" class="flex items-center gap-2 text-lg font-semibold">
+              <.icon name="hero-inbox" class="h-6 w-6" />
+              <span class="sr-only">Acme Inc</span>
+            </.link>
+            <.link href={~p"/"} class="hover:text-foreground">
+              Dashboard
+            </.link>
+          </nav>
+        </.sheet_content>
+      </.sheet>
+
+      <div class="absolute right-0 top-0 p-4">
+        <.dropdown_menu>
+          <.dropdown_menu_trigger>
+            <.button variant="secondary" size="icon" class="rounded-full">
+              <.icon name="hero-user-circle" class="h-5 w-5" />
+              <span class="sr-only">Toggle user menu</span>
+            </.button>
+          </.dropdown_menu_trigger>
+          <.dropdown_menu_content align="end">
+            <.menu>
+              <%= if @current_user do %>
+                <.menu_label><%= @current_user.email %></.menu_label>
+                <.menu_separator />
+                <.link
+                  href={~p"/users/settings"}
+                  class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                >
+                  <.menu_item>Settings</.menu_item>
+                </.link>
+                <.menu_separator />
+                <.link
+                  href={~p"/users/log_out"}
+                  method="delete"
+                  class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                >
+                  <.menu_item>Logout</.menu_item>
+                </.link>
+              <% else %>
+                <.menu_label>My Account</.menu_label>
+                <.menu_separator />
+                <.link
+                  href={~p"/users/register"}
+                  class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                >
+                  <.menu_item>Register</.menu_item>
+                </.link>
+                <.menu_separator />
+                <.link
+                  href={~p"/users/log_in"}
+                  class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                >
+                  <.menu_item>Log in</.menu_item>
+                </.link>
+              <% end %>
+            </.menu>
+          </.dropdown_menu_content>
+        </.dropdown_menu>
+      </div>
+    </header>
+
     <%= @inner_content %>
   </body>
 </html>

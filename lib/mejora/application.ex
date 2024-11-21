@@ -17,7 +17,8 @@ defmodule Mejora.Application do
       # Start a worker by calling: Mejora.Worker.start_link(arg)
       # {Mejora.Worker, arg},
       # Start to serve requests, typically the last entry
-      MejoraWeb.Endpoint
+      MejoraWeb.Endpoint,
+      {Task.Supervisor, name: Mejora.TaskSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

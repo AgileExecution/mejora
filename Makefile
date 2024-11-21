@@ -18,6 +18,7 @@ deep-clean:
 	rm -rf deps
 
 setup: services
+	cd assets | npm install
 	mix setup
 
 format:

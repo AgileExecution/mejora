@@ -84,7 +84,7 @@ defmodule MejoraWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MejoraWeb.CoreComponents
+      import MejoraWeb.CoreComponents, only: [flash_group: 1]
       import MejoraWeb.Gettext
 
       # Shortcut for generating JS commands

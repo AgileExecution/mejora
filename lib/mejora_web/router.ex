@@ -17,7 +17,7 @@ defmodule MejoraWeb.Router do
   scope "/", MejoraWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", Live.Home, :index
   end
 
   # Other scopes may use custom stacks.

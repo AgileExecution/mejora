@@ -11,15 +11,6 @@ config :mejora,
   ecto_repos: [Mejora.Repo],
   generators: [timestamp_type: :utc_datetime]
 
-# Hammer
-config :hammer,
-  backend: {Hammer.Backend.ETS, [expiry_ms: 60_000 * 60 * 4, cleanup_interval_ms: 60_000 * 10]}
-
-# Authentication
-config :mejora, MejoraWeb.Guardian,
-  issuer: "mejora",
-  secret_key: "O94lojYAiUQ0C1mpPxnqGeLnmAkSQRGgMAEuP0G0wqOo1i9V/MjUV/L3"
-
 # Configures the endpoint
 config :mejora, MejoraWeb.Endpoint,
   url: [host: "localhost"],
@@ -29,16 +20,7 @@ config :mejora, MejoraWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Mejora.PubSub,
-  live_view: [signing_salt: "nCDrdLIq"],
-  session: [
-    store: :cookie,
-    key: "_mejora_key",
-    signing_salt: "SESSION_SALT",
-    # Ensures cookies are sent only over HTTPS
-    secure: true,
-    # Prevents JavaScript from accessing cookies
-    http_only: true
-  ]
+  live_view: [signing_salt: "nCDrdLIq"]
 
 # Configures the mailer
 #

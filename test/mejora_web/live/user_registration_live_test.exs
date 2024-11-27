@@ -52,7 +52,7 @@ defmodule MejoraWeb.UserRegistrationLiveTest do
       response = html_response(conn, 200)
       assert response =~ email
       assert response =~ "Settings"
-      assert response =~ "Log out"
+      assert response =~ "Logout"
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
@@ -77,7 +77,7 @@ defmodule MejoraWeb.UserRegistrationLiveTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element(~s|main a:fl-contains("Log in")|)
+        |> element(~s|a[href="/users/log_in"]|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 

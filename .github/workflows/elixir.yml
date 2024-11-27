@@ -16,9 +16,12 @@ permissions:
 
 jobs:
   build:
-
     name: Build and test
     runs-on: ubuntu-latest
+
+    env:
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
 
     services:
       postgres:
@@ -43,10 +46,6 @@ jobs:
       with:
         elixir-version: '1.15.2'
         otp-version: '26.0'
-    - name: Print environment variables
-      run: |
-        echo "DB_USERNAME=${DB_USERNAME}"
-        echo "DB_PASSWORD=${DB_PASSWORD}"
     - name: Restore dependencies cache
       uses: actions/cache@v3
       with:
@@ -63,9 +62,6 @@ jobs:
           sleep 5
         done
     - name: Set up database
-      env:
-        DB_USERNAME: postgres
-        DB_PASSWORD: postgres
       run: |
         mix ecto.create
         mix ecto.migrate

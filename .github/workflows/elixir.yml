@@ -34,7 +34,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 3
-          -v /dev/null:/var/lib/postgresql/data
+          --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=64m
 
     steps:
     - uses: actions/checkout@v4

@@ -1,0 +1,43 @@
+{
+  "default_stop_words": [
+    "defmodule",
+    "defrecord",
+    "defimpl",
+    "defexception",
+    "defprotocol",
+    "defstruct",
+    "def.+(.+\\\\.+).+do",
+    "^\\s+use\\s+"
+  ],
+
+  "custom_stop_words": [
+  ],
+
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": false,
+    "output_dir": "cover/",
+    "minimum_coverage": 0,
+    "floor_coverage": true
+  },
+
+  "terminal_options": {
+    "file_column_width": 40
+  },
+
+  "skip_files": [
+    "lib/mejora_web/components",
+    "test",
+    "lib/mejora.ex",
+    "lib/mejora/application.ex",
+    "lib/mejora/mailer.ex",
+    "lib/mejora/repo.ex",
+    "lib/mejora_web.ex",
+    "lib/mejora_web/controllers/page_controller.ex",
+    "lib/mejora_web/controllers/page_html.ex",
+    "lib/mejora_web/endpoint.ex",
+    "lib/mejora_web/gettext.ex",
+    "lib/mejora_web/router.ex",
+    "lib/mejora_web/telemetry.ex"
+  ]
+}
+

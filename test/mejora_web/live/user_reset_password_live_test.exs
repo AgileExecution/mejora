@@ -93,7 +93,7 @@ defmodule MejoraWeb.UserResetPasswordLiveTest do
 
       {:ok, conn} =
         lv
-        |> element(~s|main a:fl-contains("Log in")|)
+        |> element(~s|a[href="/users/log_in"]|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 
@@ -108,7 +108,7 @@ defmodule MejoraWeb.UserResetPasswordLiveTest do
 
       {:ok, conn} =
         lv
-        |> element(~s|main a:fl-contains("Register")|)
+        |> element(~s|a[href="/users/register"]|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 

@@ -1,7 +1,7 @@
 defmodule Mejora.Importers do
   alias Mejora.Importers.{Boards, Neighborhoods, People, Properties, Providers, Transactions}
 
-  def read_spreadsheet(file_path, opts \\ [truncate: false]) do
+  def process_spreadsheet(file_path, opts \\ [truncate: false]) do
     if Keyword.get(opts, :truncate, false), do: do_truncate()
 
     case Xlsxir.multi_extract(file_path) do
@@ -9,8 +9,8 @@ defmodule Mejora.Importers do
         {:ok, neighborhoods},
         {:ok, boards},
         {:ok, properties},
+        {:ok, _people},
         {:ok, people},
-        {:ok, _people_all},
         {:ok, providers},
         {:ok, income_transactions},
         {:ok, outcome_transactions}

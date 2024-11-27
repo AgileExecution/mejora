@@ -6,6 +6,8 @@ defmodule Mejora.Repo.Migrations.CreatePropertyMemberships do
       add :user_id, references(:users, on_delete: :nothing), null: false
       add :property_id, references(:properties, on_delete: :nothing), null: false
       add :role, :string
+
+      timestamps()
     end
   end
 end

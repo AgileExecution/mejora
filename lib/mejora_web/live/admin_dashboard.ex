@@ -31,7 +31,7 @@ defmodule MejoraWeb.Live.AdminDashboard do
   def handle_event("upload", _params, socket) do
     uploaded_files =
       consume_uploaded_entries(socket, :spreadsheet_file, fn %{path: path}, _entry ->
-        {:ok, Importers.read_spreadsheet(path, truncate: true)}
+        {:ok, Importers.process_spreadsheet(path, truncate: true)}
       end)
 
     {:noreply, assign(socket, :data, uploaded_files)}

@@ -73,6 +73,21 @@ defmodule Mejora.Accounts.User do
     ])
   end
 
+  def person_changeset(user, attrs) do
+    user
+    |> cast(attrs, [
+      :email,
+      :name,
+      :father_last_name,
+      :mother_last_name,
+      :cellphone_number,
+      :curp,
+      :rfc,
+      :hashed_password,
+      :confirmed_at
+    ])
+  end
+
   defp validate_email(changeset, opts) do
     changeset
     |> validate_required([:email])

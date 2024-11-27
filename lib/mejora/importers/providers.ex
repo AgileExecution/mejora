@@ -4,6 +4,8 @@ defmodule Mejora.Importers.Providers do
   alias Mejora.Providers.Provider
   alias Mejora.Repo
 
+  @header "Nombre Comercial"
+
   def process(tab) do
     tab
     |> Xlsxir.get_list()
@@ -16,7 +18,7 @@ defmodule Mejora.Importers.Providers do
             is_nil(Enum.at(record, 0)) ->
               multi_acc
 
-            Enum.at(record, 0) != "Calle" ->
+            Enum.at(record, 0) != @header ->
               Ecto.Multi.insert(
                 multi_acc,
                 Ecto.UUID.generate(),

@@ -4,6 +4,8 @@ defmodule Mejora.Importers.Neighborhoods do
   alias Mejora.Neighborhoods.Neighborhood
   alias Mejora.Repo
 
+  @header "Nombre de la Colonia"
+
   def process(tab) do
     tab
     |> Xlsxir.get_list()
@@ -16,7 +18,7 @@ defmodule Mejora.Importers.Neighborhoods do
             is_nil(Enum.at(record, 0)) ->
               multi_acc
 
-            Enum.at(record, 0) != "Nombre de la Colonia" ->
+            Enum.at(record, 0) != @header ->
               Ecto.Multi.insert(
                 multi_acc,
                 Ecto.UUID.generate(),

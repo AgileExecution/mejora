@@ -8,6 +8,8 @@ defmodule Mejora.Repo.Migrations.CreateBoards do
       add :end_date, :date
       add :comments, :string
       add :status, :string, default: "active"
+
+      timestamps()
     end
   end
 end

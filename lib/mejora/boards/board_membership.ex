@@ -11,7 +11,7 @@ defmodule Mejora.Boards.BoardMembership do
     belongs_to :board, Board
 
     field :role, Ecto.Enum,
-      values: [:president, :secretary, :treasure, :vocal_one, :vocal_two, :vocal_three],
+      values: [:president, :secretary, :treasurer, :vocal_one, :vocal_two, :vocal_three],
       default: :president
 
     timestamps()

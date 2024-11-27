@@ -6,6 +6,8 @@ defmodule Mejora.Repo.Migrations.CreateBoardMemberships do
       add :user_id, references(:users, on_delete: :nothing), null: false
       add :board_id, references(:boards, on_delete: :nothing), null: false
       add :role, :string
+
+      timestamps()
     end
   end
 end

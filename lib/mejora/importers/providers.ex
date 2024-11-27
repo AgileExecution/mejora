@@ -34,7 +34,7 @@ defmodule Mejora.Importers.Providers do
 
         {:error, failed_operation, failed_value, changes_so_far} ->
           Xlsxir.close(tab)
-          IO.puts("Failed to insert:")
+          IO.puts("Failed to insert Provider:")
           IO.inspect(failed_operation)
           IO.inspect(failed_value)
           IO.inspect(changes_so_far)
@@ -46,7 +46,7 @@ defmodule Mejora.Importers.Providers do
     %{
       name: Enum.at(record, 0),
       legal_name: Enum.at(record, 1),
-      rfc: Enum.at(record, 2),
+      rfc: parse_string(Enum.at(record, 2)),
       address: Enum.at(record, 3),
       bank_account: parse_number(Enum.at(record, 4)),
       description: Enum.at(record, 5)

@@ -1,5 +1,7 @@
 defmodule Mejora.Importers.People do
-  def process(tab) do
-    Xlsxir.get_list(tab)
+  def process(_tab) do
+    # we get the property name
+    # we find the property (must be created first)
+    # we create property membership
   end
 end

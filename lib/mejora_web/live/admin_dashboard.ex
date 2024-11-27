@@ -31,56 +31,9 @@ defmodule MejoraWeb.Live.AdminDashboard do
   def handle_event("upload", _params, socket) do
     uploaded_files =
       consume_uploaded_entries(socket, :spreadsheet_file, fn %{path: path}, _entry ->
-        {:ok, read_spreadsheet(path)}
+        {:ok, Importers.read_spreadsheet(path, truncate: true)}
       end)
 
     {:noreply, assign(socket, :data, uploaded_files)}
-  end
-
-  defp read_spreadsheet(file_path) do
-    case Xlsxir.multi_extract(file_path) do
-      [
-        {:ok, neighborhoods},
-        {:ok, boards},
-        {:ok, properties},
-        {:ok, people},
-        {:ok, providers},
-        {:ok, income_transactions},
-        {:ok, outcome_transactions}
-        | _
-      ] ->
-        Task.Supervisor.async(Mejora.TaskSupervisor, fn ->
-          Task.async(fn ->
-            Importers.Boards.process(boards) |> IO.inspect()
-          end)
-
-          Task.async(fn ->
-            Importers.Neighborhoods.process(neighborhoods) |> IO.inspect()
-          end)
-
-          Task.async(fn ->
-            Importers.Properties.process(properties) |> IO.inspect()
-          end)
-
-          Task.async(fn ->
-            Importers.People.process(people) |> IO.inspect()
-          end)
-
-          Task.async(fn ->
-            Importers.Providers.process(providers) |> IO.inspect()
-          end)
-
-          Task.async(fn ->
-            Importers.Transactions.process(income_transactions) |> IO.inspect()
-          end)
-
-          Task.async(fn ->
-            Importers.Transactions.process(outcome_transactions) |> IO.inspect()
-          end)
-        end)
-
-      {:error, reason} ->
-        IO.inspect(reason)
-    end
   end
 end

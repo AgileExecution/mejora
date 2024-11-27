@@ -34,7 +34,7 @@ defmodule Mejora.Importers.Properties do
 
         {:error, failed_operation, failed_value, changes_so_far} ->
           Xlsxir.close(tab)
-          IO.puts("Failed to insert:")
+          IO.puts("Failed to insert Property:")
           IO.inspect(failed_operation)
           IO.inspect(failed_value)
           IO.inspect(changes_so_far)

@@ -8,6 +8,12 @@ config :bcrypt_elixir, :log_rounds, 1
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
+
+IO.inspect(System.get_env("DB_USERNAME"), label: "DB_USERNAME")
+IO.inspect(System.get_env("DB_PASSWORD"), label: "DB_PASSWORD")
+IO.inspect(System.get_env("DB_DATABASE"), label: "DB_DATABASE")
+IO.inspect(System.get_env("DB_HOSTNAME"), label: "DB_HOSTNAME")
+
 config :mejora, Mejora.Repo,
   username: System.get_env("DB_USERNAME", "postgres"),
   password: System.get_env("DB_PASSWORD", "postgres"),

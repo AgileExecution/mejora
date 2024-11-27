@@ -16,11 +16,11 @@ defmodule Mejora.Importers do
         {:ok, outcome_transactions}
         | _
       ] ->
+        Providers.process(providers)
         Neighborhoods.process(neighborhoods)
         Properties.process(properties)
         People.process(people)
         Boards.process(boards)
-        Providers.process(providers)
         Transactions.process(income_transactions)
         Transactions.process(outcome_transactions)
 

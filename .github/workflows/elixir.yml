@@ -22,7 +22,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15  # Especifica la versión de PostgreSQL que usas
+        image: postgres:15
         ports:
           - 5432:5432
         env:
@@ -34,6 +34,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 3
+          -v /dev/null:/var/lib/postgresql/data
 
     steps:
     - uses: actions/checkout@v4
@@ -50,6 +51,13 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
+    - name: Wait for PostgreSQL
+      run: |
+        for i in {1..10}; do
+          pg_isready -h localhost -U postgres && break
+          echo "Waiting for PostgreSQL to be ready..."
+          sleep 5
+        done
     - name: Set up database
       run: |
         mix ecto.create

@@ -3,6 +3,18 @@ defmodule Mejora.Neighborhoods.Neighborhood do
 
   import Ecto.Changeset
 
+  alias __MODULE__, as: Neighborhood
+
+  @required_fields [
+    :name,
+    :commercial_name,
+    :type,
+    :state,
+    :city,
+    :zipcode,
+    :email
+  ]
+
   schema "neighborhoods" do
     field :name, :string
     field :commercial_name, :string
@@ -19,33 +31,34 @@ defmodule Mejora.Neighborhoods.Neighborhood do
   end
 
   def changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
     changeset
-    |> cast(attrs, [
-      :name,
-      :commercial_name,
-      :type,
-      :state,
-      :city,
-      :zipcode,
-      :email,
-      :total_count_active_properties,
-      :total_count_properties,
-      :comments
-    ])
-    |> validate_required([
-      :name,
-      :commercial_name,
-      :type,
-      :state,
-      :city,
-      :zipcode,
-      :email
-    ])
+    |> cast(attrs, fields)
+    |> validate_required(@required_fields)
   end
 
   def edit_changeset(changeset, attrs) do
     changeset
     |> cast(attrs, [:name])
     |> validate_required([:name])
+  end
+
+  def embedded_changeset({record, index}) do
+    fields = __schema__(:fields)
+
+    attrs =
+      record
+      |> parse_attrs()
+      |> Map.put(:index, index)
+
+    %Neighborhood{}
+    |> cast(attrs, fields)
+  end
+
+  defp parse_attrs(record) do
+    Enum.reduce(record, %{}, fn {key, value}, acc ->
+      Map.put(acc, String.to_existing_atom(key), value)
+    end)
   end
 end

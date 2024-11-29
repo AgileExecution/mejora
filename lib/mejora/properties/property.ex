@@ -11,9 +11,11 @@ defmodule Mejora.Properties.Property do
     timestamps()
   end
 
-  def changeset(property, attrs) do
-    property
-    |> cast(attrs, [:street, :number, :status, :comments])
+  def changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
+    changeset
+    |> cast(attrs, fields)
     |> validate_required([:street, :number])
   end
 end

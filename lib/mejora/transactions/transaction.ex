@@ -5,6 +5,14 @@ defmodule Mejora.Transactions.Transaction do
 
   alias Mejora.Transactions.TransactionRow
 
+  @required_fields [
+    :total_amount,
+    :transaction_type,
+    :payment_date,
+    :association_id,
+    :association_type
+  ]
+
   schema "transactions" do
     field :total_amount, :decimal
     field :author, :string
@@ -21,24 +29,11 @@ defmodule Mejora.Transactions.Transaction do
   end
 
   def changeset(transaction, attrs) do
+    fields = __schema__(:fields)
+
     transaction
-    |> cast(attrs, [
-      :total_amount,
-      :author,
-      :transaction_type,
-      :payment_date,
-      :comments,
-      :association_id,
-      :association_type,
-      :date_range
-    ])
-    |> validate_required([
-      :total_amount,
-      :transaction_type,
-      :payment_date,
-      :association_id,
-      :association_type
-    ])
+    |> cast(attrs, fields)
+    |> validate_required(@required_fields)
     |> cast_assoc(:transaction_rows)
   end
 end

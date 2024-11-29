@@ -14,9 +14,11 @@ defmodule Mejora.Providers.Provider do
     timestamps()
   end
 
-  def changeset(provider, attrs) do
-    provider
-    |> cast(attrs, [:name, :rfc, :status, :description, :bank_account])
+  def changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
+    changeset
+    |> cast(attrs, fields)
     |> validate_required([:name])
   end
 end

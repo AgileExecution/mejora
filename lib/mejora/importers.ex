@@ -1,32 +1,47 @@
 defmodule Mejora.Importers do
-  alias Mejora.Importers.{Boards, Neighborhoods, People, Properties, Providers, Transactions}
+  alias Mejora.Importers.SpreadsheetErrors
+  alias Mejora.Repo
 
-  def process_spreadsheet(file_path, opts \\ [truncate: false]) do
+  def import_stream!(stream, opts \\ [truncate: false]) do
     if Keyword.get(opts, :truncate, false), do: do_truncate()
 
-    case Xlsxir.multi_extract(file_path) do
-      [
-        {:ok, neighborhoods},
-        {:ok, boards},
-        {:ok, properties},
-        {:ok, _people},
-        {:ok, people},
-        {:ok, providers},
-        {:ok, income_transactions},
-        {:ok, outcome_transactions}
-        | _
-      ] ->
-        Providers.process(providers)
-        Neighborhoods.process(neighborhoods)
-        Properties.process(properties)
-        People.process(people)
-        Boards.process(boards)
-        Transactions.process(income_transactions)
-        Transactions.process(outcome_transactions)
+    Repo.transaction(fn ->
+      # Process each worksheet
+      stream
+      |> Stream.map(fn {worksheet_name, data} ->
+        # Process each row of the current worksheet
+        schema = get_schema(worksheet_name)
+        Stream.map(data, &schema.embedded_changeset/1)
+      end)
+      |> Stream.flat_map(fn inner_stream -> inner_stream end)
+      |> Enum.reduce(%{valid: [], errors: struct(SpreadsheetErrors)}, &accumulate_results/2)
+      |> handle_results()
+    end)
+  end
 
-      {:error, reason} ->
-        IO.inspect(reason)
-    end
+  defp accumulate_results({:ok, record}, acc),
+    do: %{valid: [record | acc.valid], errors: acc.errors}
+
+  defp accumulate_results({:error, changeset}, acc),
+    do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors)}
+
+  defp handle_results(%{
+         valid: valid_records,
+         errors: %SpreadsheetErrors{global: global, rows: rows}
+       })
+       when global == [] and rows == %{} do
+    Enum.each(valid_records, &create_record(&1))
+    valid_records
+  end
+
+  defp handle_results(%{errors: errors}), do: Repo.rollback(errors)
+
+  defp process_errors(
+         %Ecto.Changeset{changes: data, errors: errors} = _changeset,
+         spreadsheet_errors
+       ) do
+    error_message = Mejora.Ecto.Helpers.translate_errors_to_string(errors)
+    SpreadsheetErrors.add_row_error(spreadsheet_errors, data.index, error_message)
   end
 
   def parse_number(nil), do: ""
@@ -52,5 +67,16 @@ defmodule Mejora.Importers do
           IO.puts("Failed to truncate #{table} table: #{inspect(reason)}")
       end
     end)
+  end
+
+  defp get_schema(:providers), do: Provider
+  defp get_schema(:boards), do: Board
+  defp get_schema(:properties), do: Property
+  defp get_schema(:neighborhoods), do: Neighborhood
+  defp get_schema(:people), do: User
+  defp get_schema(:income_transactions), do: Transaction
+  defp get_schema(:outcome_transactions), do: Transaction
+
+  defp create_record(record) do
   end
 end

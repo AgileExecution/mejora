@@ -29,11 +29,59 @@ defmodule MejoraWeb.Live.AdminDashboard do
   end
 
   def handle_event("upload", _params, socket) do
-    uploaded_files =
+    [content] =
       consume_uploaded_entries(socket, :spreadsheet_file, fn %{path: path}, _entry ->
-        {:ok, Importers.process_spreadsheet(path, truncate: true)}
+        results =
+          path
+          |> Xlsxir.multi_extract()
+          |> Enum.with_index()
+          |> Enum.map(fn {{:ok, worksheet_id}, index} ->
+            worksheet_id
+            |> Xlsxir.get_mda()
+            |> Enum.reduce({nil, []}, fn {idx, row}, {keys, results} ->
+              if idx == 0 do
+                {row, results}
+              else
+                result =
+                  Map.new(row, fn {k, v} ->
+                    {keys[k], parse_field(keys[k], v)}
+                  end)
+
+                {keys, [result | results]}
+              end
+            end)
+            |> then(fn {_, data} ->
+              {get_worksheet_name(index), data}
+            end)
+          end)
+
+        {:ok, results}
       end)
 
-    {:noreply, assign(socket, :data, uploaded_files)}
+    Task.Supervisor.async_nolink(Mejora.TaskSupervisor, fn ->
+      content
+      |> Enum.map(fn {worksheet_name, data} ->
+        {worksheet_name,
+         data
+         |> Enum.reverse()
+         |> Enum.with_index(2)}
+      end)
+      |> Importers.import_stream!(truncate: true)
+    end)
+
+    {:noreply, assign(socket, :data, content)}
   end
+
+  defp parse_field(_field, value), do: value
+
+  defp get_worksheet_name(0), do: :neighborhoods
+  defp get_worksheet_name(1), do: :boards
+  defp get_worksheet_name(2), do: :properties
+  defp get_worksheet_name(3), do: :people_old
+  defp get_worksheet_name(4), do: :people
+  defp get_worksheet_name(5), do: :providers
+  defp get_worksheet_name(6), do: :income_transactions
+  defp get_worksheet_name(7), do: :outcome_transactions
+  defp get_worksheet_name(8), do: :quotas
+  defp get_worksheet_name(_), do: :unknown
 end

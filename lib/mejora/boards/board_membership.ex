@@ -17,9 +17,11 @@ defmodule Mejora.Boards.BoardMembership do
     timestamps()
   end
 
-  def changeset(property_membership, attrs) do
-    property_membership
-    |> cast(attrs, [:user_id, :board_id, :role])
+  def changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
+    changeset
+    |> cast(attrs, fields)
     |> validate_required([:user_id, :board_id, :role])
   end
 end

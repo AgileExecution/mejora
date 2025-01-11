@@ -57,8 +57,9 @@ defmodule Mejora.Neighborhoods.Neighborhood do
   end
 
   defp parse_attrs(record) do
-    Enum.reduce(record, %{}, fn {key, value}, acc ->
-      Map.put(acc, String.to_existing_atom(key), value)
+    Enum.reduce(record, %{}, fn
+      {nil, _value}, acc -> acc
+      {key, value}, acc -> Map.put(acc, String.to_atom(key), value)
     end)
   end
 end

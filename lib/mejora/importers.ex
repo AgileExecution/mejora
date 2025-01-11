@@ -1,6 +1,13 @@
 defmodule Mejora.Importers do
+  alias Ecto.Adapter.Transaction
+  alias Mejora.Accounts.User
+  alias Mejora.Boards.Board
+  alias Mejora.Neighborhoods.Neighborhood
+  alias Mejora.Properties.Property
+  alias Mejora.Providers.Provider
   alias Mejora.Importers.SpreadsheetErrors
   alias Mejora.Repo
+  alias Mejora.Transactions.Transaction
 
   def import_stream!(stream, opts \\ [truncate: false]) do
     if Keyword.get(opts, :truncate, false), do: do_truncate()
@@ -11,7 +18,14 @@ defmodule Mejora.Importers do
       |> Stream.map(fn {worksheet_name, data} ->
         # Process each row of the current worksheet
         schema = get_schema(worksheet_name)
-        Stream.map(data, &schema.embedded_changeset/1)
+
+        data
+        |> Enum.filter(fn
+          {%{nil => nil}, _index} -> false
+          {%{nil => _}, _index} -> false
+          _ -> true
+        end)
+        |> Stream.map(&schema.embedded_changeset/1)
       end)
       |> Stream.flat_map(fn inner_stream -> inner_stream end)
       |> Enum.reduce(%{valid: [], errors: struct(SpreadsheetErrors)}, &accumulate_results/2)
@@ -19,10 +33,10 @@ defmodule Mejora.Importers do
     end)
   end
 
-  defp accumulate_results({:ok, record}, acc),
-    do: %{valid: [record | acc.valid], errors: acc.errors}
+  defp accumulate_results(%{valid?: true} = changeset, acc),
+    do: %{valid: [changeset.data | acc.valid], errors: acc.errors}
 
-  defp accumulate_results({:error, changeset}, acc),
+  defp accumulate_results(changeset, acc),
     do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors)}
 
   defp handle_results(%{
@@ -76,7 +90,9 @@ defmodule Mejora.Importers do
   defp get_schema(:people), do: User
   defp get_schema(:income_transactions), do: Transaction
   defp get_schema(:outcome_transactions), do: Transaction
+  defp get_schema(:people_old), do: User
+  defp get_schema(:quotas), do: Transaction
 
-  defp create_record(record) do
+  defp create_record(_record) do
   end
 end

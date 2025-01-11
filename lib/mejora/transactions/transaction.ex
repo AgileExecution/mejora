@@ -4,6 +4,7 @@ defmodule Mejora.Transactions.Transaction do
   import Ecto.Changeset
 
   alias Mejora.Transactions.TransactionRow
+  alias __MODULE__, as: Transaction
 
   @required_fields [
     :total_amount,
@@ -36,4 +37,25 @@ defmodule Mejora.Transactions.Transaction do
     |> validate_required(@required_fields)
     |> cast_assoc(:transaction_rows)
   end
+
+  def embedded_changeset({record, index}) do
+    fields = __schema__(:fields)
+
+    attrs =
+      record
+      |> parse_attrs()
+      |> Map.put(:index, index)
+
+    %Transaction{}
+    |> cast(attrs, fields)
+  end
+
+  defp parse_attrs(record) do
+    Enum.reduce(record, %{}, fn
+      {nil, _value}, acc -> acc
+      {key, value}, acc -> Map.put(acc, to_atom(key), value)
+    end)
+  end
+
+  def to_atom(key), do: String.to_atom(key)
 end

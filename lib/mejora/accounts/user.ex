@@ -2,6 +2,8 @@ defmodule Mejora.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias __MODULE__, as: User
+
   schema "users" do
     field :email, :string
     field :password, :string, virtual: true, redact: true
@@ -204,4 +206,25 @@ defmodule Mejora.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  def embedded_changeset({record, index}) do
+    fields = __schema__(:fields)
+
+    attrs =
+      record
+      |> parse_attrs()
+      |> Map.put(:index, index)
+
+    %User{}
+    |> cast(attrs, fields)
+  end
+
+  defp parse_attrs(record) do
+    Enum.reduce(record, %{}, fn
+      {nil, _value}, acc -> acc
+      {key, value}, acc -> Map.put(acc, to_atom(key), value)
+    end)
+  end
+
+  defp to_atom(key), do: String.to_atom(key)
 end

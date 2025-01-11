@@ -24,50 +24,24 @@ defmodule MejoraWeb.Live.AdminDashboard do
   end
 
   @impl true
+  def handle_info({_reg, _transactions}, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info({:DOWN, _ref, :process, _pid, _error}, socket), do: {:noreply, socket}
+
+  @impl true
   def handle_event("validate", _params, socket) do
     {:noreply, socket}
   end
 
   def handle_event("upload", _params, socket) do
-    [content] =
-      consume_uploaded_entries(socket, :spreadsheet_file, fn %{path: path}, _entry ->
-        results =
-          path
-          |> Xlsxir.multi_extract()
-          |> Enum.with_index()
-          |> Enum.map(fn {{:ok, worksheet_id}, index} ->
-            worksheet_id
-            |> Xlsxir.get_mda()
-            |> Enum.reduce({nil, []}, fn {idx, row}, {keys, results} ->
-              if idx == 0 do
-                {row, results}
-              else
-                result =
-                  Map.new(row, fn {k, v} ->
-                    {keys[k], parse_field(keys[k], v)}
-                  end)
-
-                {keys, [result | results]}
-              end
-            end)
-            |> then(fn {_, data} ->
-              {get_worksheet_name(index), data}
-            end)
-          end)
-
-        {:ok, results}
+    content =
+      socket
+      |> consume_uploaded_entries(:spreadsheet_file, fn %{path: path}, _entry ->
+        {:ok, extract_data(path)}
       end)
-
-    Task.Supervisor.async_nolink(Mejora.TaskSupervisor, fn ->
-      content
-      |> Enum.map(fn {worksheet_name, data} ->
-        {worksheet_name,
-         data
-         |> Enum.reverse()
-         |> Enum.with_index(2)}
-      end)
-      |> Importers.import_stream!(truncate: true)
-    end)
+      |> async_import_stream()
 
     {:noreply, assign(socket, :data, content)}
   end
@@ -84,4 +58,44 @@ defmodule MejoraWeb.Live.AdminDashboard do
   defp get_worksheet_name(7), do: :outcome_transactions
   defp get_worksheet_name(8), do: :quotas
   defp get_worksheet_name(_), do: :unknown
+
+  defp extract_data(path) do
+    path
+    |> Xlsxir.multi_extract()
+    |> Enum.with_index()
+    |> Enum.map(fn {{:ok, worksheet_id}, index} ->
+      worksheet_id
+      |> Xlsxir.get_mda()
+      |> Enum.reduce({nil, []}, fn {subindex, row}, {keys, results} ->
+        if subindex == 0 do
+          {row, results}
+        else
+          result =
+            Map.new(row, fn {key, value} ->
+              {keys[key], parse_field(keys[key], value)}
+            end)
+
+          {keys, [result | results]}
+        end
+      end)
+      |> then(fn {_, data} ->
+        {get_worksheet_name(index), data}
+      end)
+    end)
+  end
+
+  defp async_import_stream([content]) do
+    Task.Supervisor.async_nolink(Mejora.TaskSupervisor, fn ->
+      content
+      |> Enum.map(fn {worksheet_name, data} ->
+        {worksheet_name,
+         data
+         |> Enum.reverse()
+         |> Enum.with_index(2)}
+      end)
+      |> Importers.import_stream!()
+    end)
+
+    content
+  end
 end

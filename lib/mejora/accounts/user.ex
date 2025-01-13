@@ -17,6 +17,7 @@ defmodule Mejora.Accounts.User do
     field :cellphone_number, :string
     field :curp, :string
     field :rfc, :string
+    field :index, :integer, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -208,23 +209,34 @@ defmodule Mejora.Accounts.User do
   end
 
   def embedded_changeset({record, index}) do
-    fields = __schema__(:fields)
+    fields = __schema__(:fields) ++ [:index]
 
     attrs =
       record
       |> parse_attrs()
       |> Map.put(:index, index)
 
-    %User{}
-    |> cast(attrs, fields)
+    cast(%User{}, attrs, fields)
   end
 
-  defp parse_attrs(record) do
-    Enum.reduce(record, %{}, fn
-      {nil, _value}, acc -> acc
-      {key, value}, acc -> Map.put(acc, to_atom(key), value)
-    end)
-  end
+  defp parse_attrs(record),
+    do:
+      Enum.reduce(record, %{}, fn
+        {nil, _value}, acc -> acc
+        {"Celular" = key, value}, acc -> Map.put(acc, to_atom(key), parse_as(value, :string))
+        {key, value}, acc -> Map.put(acc, to_atom(key), value)
+      end)
 
+  defp to_atom("Apellido Materno"), do: :mother_last_name
+  defp to_atom("Apellido Paterno"), do: :father_last_name
+  defp to_atom("CURP"), do: :curp
+  defp to_atom("Celular"), do: :cellphone_number
+  defp to_atom("Email"), do: :email
+  defp to_atom("Nombre"), do: :name
+  defp to_atom("RFC"), do: :rfc
   defp to_atom(key), do: String.to_atom(key)
+
+  defp parse_as(nil, :string), do: ""
+  defp parse_as(value, :string) when is_bitstring(value), do: value
+  defp parse_as(value, :string) when is_integer(value), do: Integer.to_string(value)
 end

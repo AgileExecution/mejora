@@ -15,6 +15,13 @@ defmodule Mejora.Importers do
     Repo.transaction(fn ->
       # Process each worksheet
       stream
+      |> Stream.filter(fn
+        {:providers, _data} ->
+          true
+
+        _ ->
+          false
+      end)
       |> Stream.map(fn {worksheet_name, data} ->
         # Process each row of the current worksheet
         schema = get_schema(worksheet_name)
@@ -48,7 +55,10 @@ defmodule Mejora.Importers do
     valid_records
   end
 
-  defp handle_results(%{errors: errors}), do: Repo.rollback(errors)
+  defp handle_results(%{errors: errors}) do
+    IO.inspect(errors)
+    Repo.rollback(errors)
+  end
 
   defp process_errors(
          %Ecto.Changeset{changes: data, errors: errors} = _changeset,
@@ -93,6 +103,7 @@ defmodule Mejora.Importers do
   defp get_schema(:people_old), do: User
   defp get_schema(:quotas), do: Transaction
 
-  defp create_record(_record) do
+  defp create_record(record) do
+    Repo.insert(record)
   end
 end

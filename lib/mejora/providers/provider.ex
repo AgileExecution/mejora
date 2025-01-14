@@ -11,7 +11,9 @@ defmodule Mejora.Providers.Provider do
     field :description, :string
     field :bank_account, :string
     field :address, :string
+    field :service, :string
     field :legal_name, :string
+    field :index, :integer, virtual: true
 
     timestamps()
   end
@@ -25,7 +27,7 @@ defmodule Mejora.Providers.Provider do
   end
 
   def embedded_changeset({record, index}) do
-    fields = __schema__(:fields)
+    fields = __schema__(:fields) ++ [:index]
 
     attrs =
       record
@@ -34,6 +36,7 @@ defmodule Mejora.Providers.Provider do
 
     %Provider{}
     |> cast(attrs, fields)
+    |> validate_required([:name, :rfc, :legal_name])
   end
 
   defp parse_attrs(record) do
@@ -43,6 +46,11 @@ defmodule Mejora.Providers.Provider do
     end)
   end
 
-  defp to_atom(key) when key == "Cuenta CLABE", do: :clabe
+  defp to_atom(key) when key == "Nombre Comercial", do: :name
+  defp to_atom(key) when key == "RFC", do: :rfc
+  defp to_atom(key) when key == "Razon Social", do: :legal_name
+  defp to_atom(key) when key == "Dirección", do: :address
+  defp to_atom(key) when key == "Cuenta CLABE", do: :bank_account
+  defp to_atom(key) when key == "Tipo de Servicio", do: :service
   defp to_atom(key), do: String.to_atom(key)
 end

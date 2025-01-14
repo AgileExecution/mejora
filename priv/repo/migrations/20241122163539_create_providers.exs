@@ -8,6 +8,8 @@ defmodule Mejora.Repo.Migrations.CreateProviders do
       add :status, :string, default: "active"
       add :description, :string
       add :bank_account, :string
+      add :address, :string
+      add :service, :string
 
       timestamps()
     end

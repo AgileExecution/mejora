@@ -41,7 +41,7 @@ defmodule Mejora.Importers do
   end
 
   defp accumulate_results(%{valid?: true} = changeset, acc),
-    do: %{valid: [changeset.data | acc.valid], errors: acc.errors}
+    do: %{valid: [Ecto.Changeset.apply_changes(changeset) | acc.valid], errors: acc.errors}
 
   defp accumulate_results(changeset, acc),
     do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors)}
@@ -103,7 +103,5 @@ defmodule Mejora.Importers do
   defp get_schema(:people_old), do: User
   defp get_schema(:quotas), do: Transaction
 
-  defp create_record(record) do
-    Repo.insert(record)
-  end
+  defp create_record(record), do: Repo.insert(record)
 end

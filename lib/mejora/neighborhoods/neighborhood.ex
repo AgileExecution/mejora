@@ -61,11 +61,20 @@ defmodule Mejora.Neighborhoods.Neighborhood do
 
   defp parse_attrs(record) do
     Enum.reduce(record, %{}, fn
-      {nil, _value}, acc -> acc
-      {"Distrito Electoral", value}, acc -> Map.put(acc, :electoral_district, parse_as(value, :string))
-      {"Código Postal", value}, acc -> Map.put(acc, :zipcode, parse_as(value, :string))
-      {"Fecha de Alta", value}, acc -> Map.put(acc, :init_date, parse_as(value, :date))
-      {key, value}, acc -> Map.put(acc, to_atom(key), value)
+      {nil, _value}, acc ->
+        acc
+
+      {"Distrito Electoral", value}, acc ->
+        Map.put(acc, :electoral_district, parse_as(value, :string))
+
+      {"Código Postal", value}, acc ->
+        Map.put(acc, :zipcode, parse_as(value, :string))
+
+      {"Fecha de Alta", value}, acc ->
+        Map.put(acc, :init_date, parse_as(value, :date))
+
+      {key, value}, acc ->
+        Map.put(acc, to_atom(key), value)
     end)
   end
 

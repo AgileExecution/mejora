@@ -16,7 +16,8 @@ defmodule Mejora.Importers do
       # Process each worksheet
       stream
       |> Stream.filter(fn
-        {:boards, _data} ->
+        {:properties, data} ->
+          IO.inspect(data)
           true
 
         _ ->

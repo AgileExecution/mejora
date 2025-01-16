@@ -16,7 +16,7 @@ defmodule Mejora.Importers do
       # Process each worksheet
       stream
       |> Stream.filter(fn
-        {:providers, _data} ->
+        {:neighborhoods, _data} ->
           true
 
         _ ->

@@ -4,7 +4,6 @@ defmodule Mejora.Repo.Migrations.CreateNeighborhoods do
   def change do
     create table(:neighborhoods) do
       add :name, :string
-      add :commercial_name, :string
       add :type, :string
       add :state, :string
       add :city, :string
@@ -13,6 +12,10 @@ defmodule Mejora.Repo.Migrations.CreateNeighborhoods do
       add :total_count_properties, :integer
       add :total_count_active_properties, :integer
       add :comments, :string
+      add :electoral_district, :string
+      add :representative, :string
+      add :bank_account, :string
+      add :init_date, :date
 
       timestamps()
     end

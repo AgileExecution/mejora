@@ -52,5 +52,6 @@ defmodule Mejora.Providers.Provider do
   defp to_atom(key) when key == "Dirección", do: :address
   defp to_atom(key) when key == "Cuenta CLABE", do: :bank_account
   defp to_atom(key) when key == "Tipo de Servicio", do: :service
+
   defp to_atom(key), do: String.to_atom(key)
 end

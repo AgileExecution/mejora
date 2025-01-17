@@ -1,0 +1,118 @@
+<section style="width:80vw; margin-left:10vw">
+    <h2 class="w-full text-center uppercase " style="font-weight:700; letter-spacing:4px; color: rgb(50,87,160); font-size:19px; margin:25px 0px 32px">
+        Estado de Cuenta
+    </h2>
+
+    <section class="flex flex-row justify-around" style="justify-content:space-around">
+        <div id="border-box">
+            <span class="flex flex-row justify-between" style="font-size:15px">
+                <p class="opacity-70"> Presupuesto Anual </p>
+                <p style="color:rgb(122,182,116)"> Presupuesto Actual </p>
+            </span>
+            <span class="flex flex-row justify-between font-bold" style="font-size:20px">
+                <p> <%= raw(@money.anual_budget) %> </p>
+                <p> <%= raw(@money.actual_budget) %> </p>
+            </span>
+            <hr>
+
+            <div style="margin-bottom: -75px">
+                <span>
+                    <svg viewBox="-200 -170 400 180">
+                        <path d="M -150 0 A 150 150 0 0 1 150 0"    stroke="#e5eafc" stroke-width="20" fill="none" />
+                        <%= raw(@svg_progress) %>
+                        <%= raw(@circle_progress) %>
+                    </svg>
+                </span>
+                <span class="text-center" style="bottom:94px; position:relative">
+                    <p style="font-size:5vw; font-weight:700; line-height:64px">
+                        <%= raw(@money.percentage) %>%
+                    </p>
+                    <p>
+                        Pendiente: <strong> <%= raw(@money.debt) %> </strong>
+                    </p>
+                </span>
+            </div>
+        </div>
+
+        <div id="border-box" >
+            <p> Estatus </p>
+            <p class="font-bold" style="font-size:22px">
+                Tu residencia
+            </p>
+            <hr>
+            <div style="margin-bottom:-130px">
+                <svg viewBox="-50 0 441 158" fill="none" >
+                    <mask id="mask0_1_630" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="341" height="158">
+                        <rect y="0.302246" width="340.056" height="157.115" fill="#D9D9D9"/>
+                    </mask>
+                    <g mask="url(#mask0_1_630)">
+                        <mask id="path-2-inside-1_1_630" fill="white">
+                            <path d="M10.1165 151.353C5.1064 151.353 1.01187 147.286 1.36321 142.289C2.49673 126.165 6.64863 110.296 13.6724 95.3324C22.0091 77.5717 34.2283 61.4339 49.6324 47.8405C65.0366 34.2471 83.324 23.4642 103.45 16.1075C121.109 9.65298 139.879 5.94674 158.93 5.13479C163.347 4.94653 166.933 8.54843 166.933 12.9696C166.933 17.3907 163.347 20.9548 158.931 21.1662C142.264 21.964 125.85 25.2495 110.394 30.8993C92.4683 37.4514 76.181 47.0549 62.4616 59.1616C48.7422 71.2683 37.8594 85.6411 30.4345 101.459C24.3226 114.48 20.6524 128.271 19.5454 142.29C19.151 147.285 15.1266 151.353 10.1165 151.353Z"/>
+                        </mask>
+                        <path d="M10.1165 151.353C5.1064 151.353 1.01187 147.286 1.36321 142.289C2.49673 126.165 6.64863 110.296 13.6724 95.3324C22.0091 77.5717 34.2283 61.4339 49.6324 47.8405C65.0366 34.2471 83.324 23.4642 103.45 16.1075C121.109 9.65298 139.879 5.94674 158.93 5.13479C163.347 4.94653 166.933 8.54843 166.933 12.9696C166.933 17.3907 163.347 20.9548 158.931 21.1662C142.264 21.964 125.85 25.2495 110.394 30.8993C92.4683 37.4514 76.181 47.0549 62.4616 59.1616C48.7422 71.2683 37.8594 85.6411 30.4345 101.459C24.3226 114.48 20.6524 128.271 19.5454 142.29C19.151 147.285 15.1266 151.353 10.1165 151.353Z" stroke="#FF718B" stroke-width="28.3966" stroke-linecap="round" stroke-linejoin="round" mask="url(#path-2-inside-1_1_630)"/>
+                        <mask id="path-3-inside-2_1_630" fill="white">
+                            <path d="M176.308 12.8276C176.507 8.53021 180.125 5.17445 184.416 5.48628C203.513 6.87418 222.189 11.0148 239.646 17.7271C244.22 19.486 245.92 24.977 243.357 29.1541C241.233 32.6151 236.884 33.9491 233.104 32.4653C217.568 26.3664 200.924 22.5657 183.889 21.2257C179.522 20.8822 176.106 17.2033 176.308 12.8276Z"/>
+                        </mask>
+                        <path d="M176.308 12.8276C176.507 8.53021 180.125 5.17445 184.416 5.48628C203.513 6.87418 222.189 11.0148 239.646 17.7271C244.22 19.486 245.92 24.977 243.357 29.1541C241.233 32.6151 236.884 33.9491 233.104 32.4653C217.568 26.3664 200.924 22.5657 183.889 21.2257C179.522 20.8822 176.106 17.2033 176.308 12.8276Z" stroke="#FCB5C3" stroke-width="28.3966" stroke-linecap="round" stroke-linejoin="round" mask="url(#path-3-inside-2_1_630)"/>
+                        <mask id="path-4-inside-3_1_630" fill="white">
+                            <path d="M252.674 31.1175C255.009 27.796 259.442 26.6779 262.985 28.6623C275.764 35.8215 287.337 44.4214 297.387 54.2229C301.191 57.9325 300.359 64.1342 295.902 67.0255C292.327 69.344 287.618 68.6934 284.603 65.6831C276.094 57.1864 266.315 49.6742 255.519 43.3367C251.234 40.8216 249.817 35.1819 252.674 31.1175Z"/>
+                        </mask>
+                        <path d="M252.674 31.1175C255.009 27.796 259.442 26.6779 262.985 28.6623C275.764 35.8215 287.337 44.4214 297.387 54.2229C301.191 57.9325 300.359 64.1342 295.902 67.0255C292.327 69.344 287.618 68.6934 284.603 65.6831C276.094 57.1864 266.315 49.6742 255.519 43.3367C251.234 40.8216 249.817 35.1819 252.674 31.1175Z" stroke="#FFEB3A" stroke-width="28.3966" stroke-linecap="round" stroke-linejoin="round" mask="url(#path-4-inside-3_1_630)"/>
+                        <mask id="path-5-inside-4_1_630" fill="white">
+                            <path d="M303.656 72.1206C307.405 69.9729 312.187 70.8737 314.689 74.3967C329.309 94.9898 337.61 118.369 338.847 142.38C339.109 147.453 334.875 151.487 329.797 151.4C324.671 151.313 320.636 147.062 320.32 141.945C319.089 122.052 312.413 102.675 300.828 85.3648C297.857 80.925 299.02 74.7762 303.656 72.1206Z"/>
+                        </mask>
+                        <path d="M303.656 72.1206C307.405 69.9729 312.187 70.8737 314.689 74.3967C329.309 94.9898 337.61 118.369 338.847 142.38C339.109 147.453 334.875 151.487 329.797 151.4C324.671 151.313 320.636 147.062 320.32 141.945C319.089 122.052 312.413 102.675 300.828 85.3648C297.857 80.925 299.02 74.7762 303.656 72.1206Z" stroke="#7FE47E" stroke-width="28.3966" stroke-linecap="round" stroke-linejoin="round" mask="url(#path-5-inside-4_1_630)"/>
+                    </g>
+                </svg>
+
+                <span class="text-center" style="bottom:133px; position:relative">
+                    <p style="font-size:82px; font-weight:700" > 90% </p>
+                    <p style="font-weight:700"> Tus pagos anuales </p>
+                    <p style="font-weight:100"> Actualizado Nov 24, 2024 </p>
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <br>
+    <br>
+    <br>
+
+    <section style="margin:auto; width:45vw">
+        <h3 class="payment-title">
+            Comprobantes de Pago
+        </h3>
+        <div id="border-box-v2" class="payment-period" style="width:100%">
+            <table class="w-full" style="text-indent:20px">
+                <tr style="color: rgba(50,87,160,1); font-weight: 600;">
+                    <td> Desde </td>
+                    <td> Hasta </td>
+                </tr>
+                <tr>
+                    <td> 01/Ene/2024 </td>
+                    <td> 22/Nov/2024 </td>
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <br>
+
+        <div id="border-box-v2" style="height: 700px;    overflow: auto;    padding: 25px 30px 0px; scrollbar-width: thin;">
+            <%= for date <- @payment_dates do %>
+                <article id="payment-history-cell" class="font-semibold">
+                    <span class="flex flex-row justify-between w-full">
+                        <p> <%= date %> </p>
+                        <p class="green-color" >$750.00</p>
+                    </span>
+
+                    <p style="opacity:0.5">Pago de Residentes</p>
+                    <p class="blue-color">Transferencia Bancaria</p>
+                </article>
+            <% end %>
+        </div>
+    </section>
+</section>
+
+
+

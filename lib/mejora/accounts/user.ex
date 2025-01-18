@@ -1,6 +1,8 @@
 defmodule Mejora.Accounts.User do
   use Ecto.Schema
+
   import Ecto.Changeset
+  import Mejora.Utils
 
   alias __MODULE__, as: User
 
@@ -213,30 +215,23 @@ defmodule Mejora.Accounts.User do
 
     attrs =
       record
-      |> parse_attrs()
+      |> parse_record()
       |> Map.put(:index, index)
 
     cast(%User{}, attrs, fields)
   end
 
-  defp parse_attrs(record),
-    do:
-      Enum.reduce(record, %{}, fn
-        {nil, _value}, acc -> acc
-        {"Celular" = key, value}, acc -> Map.put(acc, to_atom(key), parse_as(value, :string))
-        {key, value}, acc -> Map.put(acc, to_atom(key), value)
-      end)
-
-  defp to_atom("Apellido Materno"), do: :mother_last_name
-  defp to_atom("Apellido Paterno"), do: :father_last_name
-  defp to_atom("CURP"), do: :curp
-  defp to_atom("Celular"), do: :cellphone_number
-  defp to_atom("Email"), do: :email
-  defp to_atom("Nombre"), do: :name
-  defp to_atom("RFC"), do: :rfc
-  defp to_atom(key), do: String.to_atom(key)
-
-  defp parse_as(nil, :string), do: ""
-  defp parse_as(value, :string) when is_bitstring(value), do: value
-  defp parse_as(value, :string) when is_integer(value), do: Integer.to_string(value)
+  defp parse_record(record) do
+    %{
+      name: Enum.at(record, 6),
+      father_last_name: Enum.at(record, 7),
+      mother_last_name: Enum.at(record, 8),
+      curp: Enum.at(record, 9),
+      rfc: Enum.at(record, 10),
+      email: Enum.at(record, 5),
+      hashed_password: Bcrypt.hash_pwd_salt("changeme"),
+      cellphone_number: parse_string(Enum.at(record, 4)),
+      confirmed_at: DateTime.utc_now()
+    }
+  end
 end

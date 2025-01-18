@@ -1,38 +1,74 @@
-defmodule Mejora.Importers do
+defmodule Mejora.Importer do
   alias Ecto.Adapter.Transaction
-  alias Mejora.Accounts.User
-  alias Mejora.Boards.Board
-  alias Mejora.Neighborhoods.Neighborhood
-  alias Mejora.Properties.Property
-  alias Mejora.Providers.Provider
-  alias Mejora.Importers.SpreadsheetErrors
-  alias Mejora.Repo
-  alias Mejora.Transactions.Transaction
 
-  def import_stream!(stream, opts \\ [truncate: false]) do
+  alias Mejora.{
+    Accounts.User,
+    Boards.Board,
+    Neighborhoods.Neighborhood,
+    Properties.Property,
+    Providers.Provider,
+    Importer.SpreadsheetErrors,
+    Repo,
+    Transactions.Transaction
+  }
+
+  def extract_data(path) do
+    path
+    |> Xlsxir.multi_extract()
+    |> Enum.with_index()
+    |> Enum.map(fn {{:ok, worksheet_id}, worksheet_index} ->
+      worksheet_id
+      |> Xlsxir.get_list()
+      |> then(fn [_header_names | data] ->
+        data
+      end)
+      |> then(fn data ->
+        {get_worksheet_name(worksheet_index), data}
+      end)
+    end)
+  end
+
+  defp get_worksheet_name(0), do: :neighborhoods
+  defp get_worksheet_name(1), do: :boards
+  defp get_worksheet_name(2), do: :properties
+  defp get_worksheet_name(3), do: :people_old
+  defp get_worksheet_name(4), do: :people
+  defp get_worksheet_name(5), do: :providers
+  defp get_worksheet_name(6), do: :income_transactions
+  defp get_worksheet_name(7), do: :outcome_transactions
+  defp get_worksheet_name(8), do: :quotas
+  defp get_worksheet_name(_), do: :unknown
+
+  def async_import_stream([content]) do
+    Task.Supervisor.async_nolink(Mejora.TaskSupervisor, fn ->
+      import_stream!(content)
+    end)
+  end
+
+  defp import_stream!(stream, opts \\ [truncate: false]) do
     if Keyword.get(opts, :truncate, false), do: do_truncate()
 
     Repo.transaction(fn ->
       # Process each worksheet
       stream
       |> Stream.filter(fn
-        {:properties, data} ->
-          IO.inspect(data)
-          true
-
-        _ ->
+        {:income_transactions, _data} ->
           false
+        {:outcome_transactions, _data} ->
+          false
+        {:quotas, _data} ->
+          false
+        {:people_old, _data} ->
+          false
+        _ ->
+          true
       end)
       |> Stream.map(fn {worksheet_name, data} ->
         # Process each row of the current worksheet
         schema = get_schema(worksheet_name)
 
         data
-        |> Enum.filter(fn
-          {%{nil => nil}, _index} -> false
-          {%{nil => _}, _index} -> false
-          _ -> true
-        end)
+        |> Stream.with_index()
         |> Stream.map(&schema.embedded_changeset/1)
       end)
       |> Stream.flat_map(fn inner_stream -> inner_stream end)
@@ -68,18 +104,6 @@ defmodule Mejora.Importers do
     error_message = Mejora.Ecto.Helpers.translate_errors_to_string(errors)
     SpreadsheetErrors.add_row_error(spreadsheet_errors, data.index, error_message)
   end
-
-  def parse_number(nil), do: ""
-  def parse_number(number) when is_bitstring(number), do: number
-  def parse_number(number) when is_integer(number), do: Integer.to_string(number)
-
-  def parse_number(number) when is_float(number),
-    do: number |> round() |> Integer.to_string()
-
-  def parse_string(nil), do: ""
-  def parse_string(string) when is_bitstring(string), do: string
-  def parse_string(string) when is_integer(string), do: Integer.to_string(string)
-  def parse_string(string) when is_float(string), do: Float.to_string(string)
 
   def do_truncate do
     ["neighborhoods", "properties", "users", "boards", "providers", "transactions"]

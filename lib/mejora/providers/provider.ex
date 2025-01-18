@@ -1,6 +1,8 @@
 defmodule Mejora.Providers.Provider do
   use Ecto.Schema
+
   import Ecto.Changeset
+  import Mejora.Utils
 
   alias __MODULE__, as: Provider
 
@@ -31,7 +33,7 @@ defmodule Mejora.Providers.Provider do
 
     attrs =
       record
-      |> parse_attrs()
+      |> parse_record()
       |> Map.put(:index, index)
 
     %Provider{}
@@ -39,19 +41,14 @@ defmodule Mejora.Providers.Provider do
     |> validate_required([:name, :rfc, :legal_name])
   end
 
-  defp parse_attrs(record) do
-    Enum.reduce(record, %{}, fn
-      {nil, _value}, acc -> acc
-      {key, value}, acc -> Map.put(acc, to_atom(key), value)
-    end)
+  defp parse_record(record) do
+    %{
+      name: Enum.at(record, 0),
+      legal_name: Enum.at(record, 1),
+      rfc: parse_string(Enum.at(record, 2)),
+      address: Enum.at(record, 3),
+      bank_account: parse_number(Enum.at(record, 4)),
+      service: Enum.at(record, 5)
+    }
   end
-
-  defp to_atom(key) when key == "Nombre Comercial", do: :name
-  defp to_atom(key) when key == "RFC", do: :rfc
-  defp to_atom(key) when key == "Razon Social", do: :legal_name
-  defp to_atom(key) when key == "Dirección", do: :address
-  defp to_atom(key) when key == "Cuenta CLABE", do: :bank_account
-  defp to_atom(key) when key == "Tipo de Servicio", do: :service
-
-  defp to_atom(key), do: String.to_atom(key)
 end

@@ -2,6 +2,7 @@ defmodule Mejora.Neighborhoods.Neighborhood do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import Mejora.Utils
 
   alias __MODULE__, as: Neighborhood
 
@@ -52,47 +53,26 @@ defmodule Mejora.Neighborhoods.Neighborhood do
 
     attrs =
       record
-      |> parse_attrs()
+      |> parse_record()
       |> Map.put(:index, index)
 
     %Neighborhood{}
     |> cast(attrs, fields)
   end
 
-  defp parse_attrs(record) do
-    Enum.reduce(record, %{}, fn
-      {nil, _value}, acc ->
-        acc
-
-      {"Distrito Electoral", value}, acc ->
-        Map.put(acc, :electoral_district, parse_as(value, :string))
-
-      {"Código Postal", value}, acc ->
-        Map.put(acc, :zipcode, parse_as(value, :string))
-
-      {"Fecha de Alta", value}, acc ->
-        Map.put(acc, :init_date, parse_as(value, :date))
-
-      {key, value}, acc ->
-        Map.put(acc, to_atom(key), value)
-    end)
+  defp parse_record(record) do
+    %{
+      name: Enum.at(record, 0),
+      commercial_name: Enum.at(record, 0),
+      type: Enum.at(record, 1),
+      state: Enum.at(record, 3),
+      city: Enum.at(record, 4),
+      zipcode: parse_number(Enum.at(record, 5)),
+      email: Enum.at(record, 6),
+      electoral_district: parse_number(Enum.at(record, 7)),
+      representative: Enum.at(record, 8),
+      init_date: parse_date(Enum.at(record, 9)),
+      bank_account: Enum.at(record, 10)
+    }
   end
-
-  defp to_atom(key) when key == "Ciudad", do: :city
-  defp to_atom(key) when key == "Código Postal", do: :zipcode
-  defp to_atom(key) when key == "Email", do: :email
-  defp to_atom(key) when key == "Estado", do: :state
-  defp to_atom(key) when key == "Nombre de la Colonia", do: :name
-  defp to_atom(key) when key == "Tipo de Colonia", do: :type
-  defp to_atom(key) when key == "Fecha de Alta", do: :init_date
-  defp to_atom(key) when key == "Saldo Cuenta Bancaria", do: :bank_account
-  defp to_atom(key) when key == "Distrito Electoral", do: :electoral_district
-  defp to_atom(key) when key == "Diputado", do: :representative
-
-  defp to_atom(key), do: String.to_atom(key)
-
-  defp parse_as(nil, :string), do: ""
-  defp parse_as(value, :string) when is_bitstring(value), do: value
-  defp parse_as(value, :string) when is_integer(value), do: Integer.to_string(value)
-  defp parse_as(value, :date) when is_integer(value), do: Timex.shift(~D[1900-01-01], days: value)
 end

@@ -1,4 +1,4 @@
-defmodule Mejora.Importers.SpreadsheetErrors do
+defmodule Mejora.Importer.SpreadsheetErrors do
   alias __MODULE__, as: SpreadsheetErrors
 
   @type t :: %SpreadsheetErrors{global: list(), rows: map()}

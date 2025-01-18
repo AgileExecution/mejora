@@ -1,6 +1,8 @@
 defmodule Mejora.Boards.Board do
   use Ecto.Schema
+
   import Ecto.Changeset
+  import Mejora.Utils
 
   alias __MODULE__, as: Board
 
@@ -30,31 +32,20 @@ defmodule Mejora.Boards.Board do
 
     attrs =
       record
-      |> parse_attrs()
+      |> parse_record()
       |> Map.put(:index, index)
 
     %Board{}
     |> cast(attrs, fields)
   end
 
-  defp parse_attrs(record) do
-    Enum.reduce(record, %{}, fn
-      {nil, _value}, acc -> acc
-      {"Fecha Final", value}, acc -> Map.put(acc, :end_date, parse_as(value, :date))
-      {"Fecha de Inicio", value}, acc -> Map.put(acc, :start_date, parse_as(value, :date))
-      {"Estatus", value}, acc -> Map.put(acc, :status, parse_as(value, :atom))
-      {key, value}, acc -> Map.put(acc, to_atom(key), value)
-    end)
+  defp parse_record(record) do
+    %{
+      name: Enum.at(record, 0),
+      start_date: parse_date(Enum.at(record, 1)),
+      end_date: parse_date(Enum.at(record, 2)),
+      status: parse_status(Enum.at(record, 13)),
+      comments: Enum.at(record, 3)
+    }
   end
-
-  defp to_atom(key) when key == "Acta Constitutiva (archivo PDF)", do: :constitutive_act
-  defp to_atom(key) when key == "Comentarios", do: :comments
-  defp to_atom(key) when key == "Nombre de la Mesa", do: :name
-  defp to_atom(key), do: String.to_atom(key)
-
-  defp parse_as(nil, :string), do: ""
-  defp parse_as("Inactiva", :atom), do: :inactive
-  defp parse_as("Activa", :atom), do: :active
-  defp parse_as(value, :date) when is_bitstring(value), do: Timex.shift(Timex.now(), months: 12)
-  defp parse_as(value, :date) when is_integer(value), do: Timex.shift(~D[1900-01-01], days: value)
 end

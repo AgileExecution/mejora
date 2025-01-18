@@ -28,7 +28,7 @@ defmodule MejoraWeb.PageController do
       anual_budget: Number.Currency.number_to_currency(anual_budget, precision: 0),
       actual_budget: Number.Currency.number_to_currency(actual_budget, precision: 0),
       debt: Number.Currency.number_to_currency(debt, precision: 0),
-      percentage: Float.to_string(percentage*100, decimals: 0)
+      percentage: Decimal.new(percentage) |> Decimal.mult("100") |> Decimal.to_string()
     }
 
     render(conn, :show, payment_dates: payment_dates, money: money, svg_progress: svg_progress, circle_progress: circle_progress, layout: false)

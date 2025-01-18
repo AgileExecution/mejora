@@ -67,3 +67,38 @@
 }
 
 body { @apply bg-background text-foreground; }
+
+
+#payment-history-cell {
+  font-family: sans-serif;
+  margin-bottom: 25px;
+}
+
+.blue-color {  color:rgb(66,133,244) }
+.green-color { color:rgb(122,182,116) }
+
+#border-box {
+  border:blue solid 1px;
+  width:45%;
+  box-shadow: 0px 3px 10px #e0e0e0;
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+
+.payment-title {
+    background-color: rgba(50,87,160,1);
+    text-indent: 27px;
+    border-radius: 5px;
+    line-height: 49px;
+    font-size: 17px;
+    font-weight: 600;
+    color:white;
+    background-color: rgba(50,87,160,1);
+}
+
+#border-box-v2 {
+  border:blue solid 1px;
+  box-shadow: 0px 3px 10px #e0e0e0;
+  padding: 1rem;
+  border-radius: 0.75rem;
+}

@@ -12,6 +12,7 @@ defmodule Mejora.Properties.Property do
     field :status, Ecto.Enum, values: [:active, :inactive], default: :active
     field :comments, :string
     field :index, :integer, virtual: true
+    field :neighborhood_id, :string
 
     timestamps()
   end

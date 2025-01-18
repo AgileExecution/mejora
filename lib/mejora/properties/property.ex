@@ -7,6 +7,8 @@ defmodule Mejora.Properties.Property do
     field :number, :string
     field :status, Ecto.Enum, values: [:active, :inactive], default: :active
     field :comments, :string
+    field :neighborhood_id, :string
+    field :paid, :string #Just for demo
 
     timestamps()
   end

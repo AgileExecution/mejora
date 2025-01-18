@@ -90,7 +90,6 @@ defmodule MejoraWeb.Router do
     delete "/users/log_out", UserSessionController, :delete
     get "/user_account_state", PageController, :show
 
-
     live_session :current_user,
       on_mount: [{MejoraWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit

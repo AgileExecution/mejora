@@ -54,12 +54,16 @@ defmodule Mejora.Importer do
       |> Stream.filter(fn
         {:income_transactions, _data} ->
           false
+
         {:outcome_transactions, _data} ->
           false
+
         {:quotas, _data} ->
           false
+
         {:people_old, _data} ->
           false
+
         _ ->
           true
       end)

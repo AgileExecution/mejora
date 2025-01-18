@@ -17,7 +17,7 @@ defmodule MejoraWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import MejoraWeb.Gettext
+  use Gettext, backend: Mejora.Gettext
 
   @doc """
   Renders a modal.

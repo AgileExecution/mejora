@@ -15,6 +15,7 @@ defmodule Mejora.Accounts.User do
     field :cellphone_number, :string
     field :curp, :string
     field :rfc, :string
+    field :neighborhood_id, :string
 
     timestamps(type: :utc_datetime)
   end

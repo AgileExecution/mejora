@@ -20,5 +20,5 @@ defmodule MejoraWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, backend: Mejora.Gettext
+  use Gettext.Backend, otp_app: :mejora
 end

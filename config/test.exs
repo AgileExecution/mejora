@@ -11,7 +11,7 @@ config :bcrypt_elixir, :log_rounds, 1
 
 config :mejora, Mejora.Repo,
   username: System.get_env("DB_USERNAME", "postgres"),
-  password: System.get_env("DB_PASSWORD", "postgres"),
+  password: System.get_env("DB_PASSWORD", "12341234"),
   database:
     System.get_env(
       "DB_DATABASE",

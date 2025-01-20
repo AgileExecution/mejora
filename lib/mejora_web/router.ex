@@ -26,6 +26,9 @@ defmodule MejoraWeb.Router do
 
     live_session :admin, on_mount: [{MejoraWeb.UserAuth, :ensure_authenticated}] do
       live "/dashboard", Live.AdminDashboard
+      live "/board", Live.Board
+      live "/projects", Live.Projects
+      live "/account", Live.Account
       live "/properties", Live.AdminProperties
     end
   end

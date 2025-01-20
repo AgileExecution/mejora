@@ -40,7 +40,7 @@ defmodule MejoraWeb.Live.AdminDashboard do
     |> consume_uploaded_entries(:spreadsheet_file, fn %{path: path}, _entry ->
       {:ok, Importer.extract_data(path)}
     end)
-    |> Importer.async_import_stream()
+    |> Importer.import_stream()
 
     {:noreply, assign(socket, :data, :done)}
   end

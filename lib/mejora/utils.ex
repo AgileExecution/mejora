@@ -18,7 +18,7 @@ defmodule Mejora.Utils do
   def parse_string(string) when is_float(string), do: Float.to_string(string)
 
   def parse_date(nil), do: nil
-  def parse_date({year, month, day} = value), do: Timex.to_date(value)
+  def parse_date({_year, _month, _day} = value), do: Timex.to_date(value)
   def parse_date(value) when is_bitstring(value), do: Timex.shift(Timex.now(), months: 12)
   def parse_date(value) when is_integer(value), do: Timex.shift(~D[1900-01-01], days: value)
 

@@ -4,6 +4,8 @@ defmodule Mejora.Properties.Property do
   import Ecto.Changeset
   import Mejora.Utils
 
+  alias Mejora.Properties.PropertyMembership
+  alias Mejora.Transactions.Transaction
   alias __MODULE__, as: Property
 
   schema "properties" do
@@ -12,7 +14,11 @@ defmodule Mejora.Properties.Property do
     field :status, Ecto.Enum, values: [:active, :inactive], default: :active
     field :comments, :string
     field :index, :integer, virtual: true
-    field :neighborhood_id, :string
+    field :neighborhood_id, :integer
+
+    has_many :property_memberships, PropertyMembership
+    has_many :users, through: [:property_memberships, :user]
+    has_many :transactions, Transaction, foreign_key: :association_id, references: :id
 
     timestamps()
   end
@@ -42,7 +48,8 @@ defmodule Mejora.Properties.Property do
       street: Enum.at(record, 0),
       number: parse_number(Enum.at(record, 1)),
       comments: Enum.at(record, 3),
-      status: parse_status(Enum.at(record, 2))
+      status: parse_status(Enum.at(record, 2)),
+      neighborhood_id: Enum.at(record, 4)
     }
   end
 end

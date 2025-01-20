@@ -20,7 +20,20 @@ defmodule Mejora.Importer do
       worksheet_id
       |> Xlsxir.get_list()
       |> then(fn [_header_names | data] ->
-        data
+        case get_worksheet_name(worksheet_index) do
+          :income_transactions ->
+            Enum.map(data, fn row ->
+              row ++ [:income]
+            end)
+
+          :outcome_transactions ->
+            Enum.map(data, fn row ->
+              row ++ [:outcome]
+            end)
+
+          _ ->
+            data
+        end
       end)
       |> then(fn data ->
         {get_worksheet_name(worksheet_index), data}
@@ -39,29 +52,33 @@ defmodule Mejora.Importer do
   defp get_worksheet_name(8), do: :quotas
   defp get_worksheet_name(_), do: :unknown
 
-  def async_import_stream([content]) do
-    Task.Supervisor.async_nolink(Mejora.TaskSupervisor, fn ->
-      import_stream!(content)
-    end)
-  end
-
-  defp import_stream!(stream, opts \\ [truncate: false]) do
+  def import_stream([content], opts \\ [truncate: false]) do
     if Keyword.get(opts, :truncate, false), do: do_truncate()
+
+    order = [
+      :boards,
+      :neighborhoods,
+      :quotas,
+      :properties,
+      :people,
+      :providers,
+      :income_transactions,
+      :outcome_transactions,
+      :people_old
+    ]
 
     Repo.transaction(fn ->
       # Process each worksheet
-      stream
+      content
+      |> Enum.sort_by(&Enum.find_index(order, fn table -> table == &1 end))
       |> Stream.filter(fn
+        {:people_old, _data} ->
+          false
+
         {:income_transactions, _data} ->
           false
 
         {:outcome_transactions, _data} ->
-          false
-
-        {:quotas, _data} ->
-          false
-
-        {:people_old, _data} ->
           false
 
         _ ->
@@ -130,7 +147,7 @@ defmodule Mejora.Importer do
   defp get_schema(:income_transactions), do: Transaction
   defp get_schema(:outcome_transactions), do: Transaction
   defp get_schema(:people_old), do: User
-  defp get_schema(:quotas), do: Transaction
+  defp get_schema(:quotas), do: Quota
 
   defp create_record(record), do: Repo.insert(record)
 end

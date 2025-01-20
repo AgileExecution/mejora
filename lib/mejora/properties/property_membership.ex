@@ -22,4 +22,12 @@ defmodule Mejora.Properties.PropertyMembership do
     |> cast(attrs, fields)
     |> validate_required([:user_id, :property_id, :role])
   end
+
+  def assoc_changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
+    changeset
+    |> cast(attrs, fields)
+    |> validate_required([:property_id, :role])
+  end
 end

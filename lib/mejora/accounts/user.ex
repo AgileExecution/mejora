@@ -4,6 +4,8 @@ defmodule Mejora.Accounts.User do
   import Ecto.Changeset
   import Mejora.Utils
 
+  alias Mejora.Properties.{Property, PropertyMembership}
+  alias Mejora.Repo
   alias __MODULE__, as: User
 
   schema "users" do
@@ -20,6 +22,9 @@ defmodule Mejora.Accounts.User do
     field :curp, :string
     field :rfc, :string
     field :index, :integer, virtual: true
+
+    has_many :property_memberships, PropertyMembership
+    has_many :properties, through: [:property_memberships, :property]
 
     timestamps(type: :utc_datetime)
   end
@@ -218,7 +223,9 @@ defmodule Mejora.Accounts.User do
       |> parse_record()
       |> Map.put(:index, index)
 
-    cast(%User{}, attrs, fields)
+    %User{}
+    |> cast(attrs, fields)
+    |> cast_assoc(:property_memberships, with: &PropertyMembership.assoc_changeset/2)
   end
 
   defp parse_record(record) do
@@ -231,7 +238,33 @@ defmodule Mejora.Accounts.User do
       email: Enum.at(record, 5),
       hashed_password: Bcrypt.hash_pwd_salt("changeme"),
       cellphone_number: parse_string(Enum.at(record, 4)),
-      confirmed_at: DateTime.utc_now()
+      confirmed_at: DateTime.utc_now(),
+      property_memberships: get_property_memberships(record)
     }
+  end
+
+  defp get_property_memberships(record) do
+    property =
+      Repo.get_by(Property, street: Enum.at(record, 1), number: parse_string(Enum.at(record, 2)))
+
+    record
+    # roles: owner (0), tenant (1), resident (2)
+    |> Enum.slice(-3, 3)
+    |> Enum.with_index()
+    |> Enum.reduce([], fn {role, index}, roles ->
+      cond do
+        role == "SI" and index == 0 ->
+          roles ++ [%{property_id: property.id, role: :owner}]
+
+        role == "SI" and index == 1 ->
+          roles ++ [%{property_id: property.id, role: :tenant}]
+
+        role == "SI" and index == 2 ->
+          roles ++ [%{property_id: property.id, role: :resident}]
+
+        true ->
+          roles
+      end
+    end)
   end
 end

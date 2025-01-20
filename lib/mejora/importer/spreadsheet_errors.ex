@@ -25,7 +25,7 @@ defmodule Mejora.Importer.SpreadsheetErrors do
               row_errors,
               index,
               to_string(error),
-              &"#{String.slice(&1, 0..-2//-1)}; #{to_string(error)}."
+              &"#{String.slice(&1, 0..-2//1)}; #{to_string(error)}."
             )
       }
 

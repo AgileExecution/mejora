@@ -24,21 +24,4 @@ defmodule Mejora.Utils do
 
   def parse_datetime(nil), do: nil
   def parse_datetime({_year, _month, _day} = value), do: Timex.to_datetime(value)
-
-  def generate_monthly_dates(start_date, end_date) do
-    Stream.unfold(start_date, fn current_date ->
-      if current_date <= end_date do
-        next_date = Date.add(current_date, days_until_next_month(current_date))
-        {current_date, next_date}
-      else
-        nil
-      end
-    end)
-    |> Enum.to_list()
-  end
-
-  defp days_until_next_month(date) do
-    {_, days_in_month} = Date.month_and_year(date)
-    days_in_month - date.day + 1
-  end
 end

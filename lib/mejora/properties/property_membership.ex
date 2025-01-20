@@ -15,9 +15,19 @@ defmodule Mejora.Properties.PropertyMembership do
     timestamps()
   end
 
-  def changeset(property_membership, attrs) do
-    property_membership
-    |> cast(attrs, [:user_id, :property_id, :role])
+  def changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
+    changeset
+    |> cast(attrs, fields)
     |> validate_required([:user_id, :property_id, :role])
+  end
+
+  def assoc_changeset(changeset, attrs) do
+    fields = __schema__(:fields)
+
+    changeset
+    |> cast(attrs, fields)
+    |> validate_required([:property_id, :role])
   end
 end

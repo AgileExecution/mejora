@@ -39,4 +39,22 @@ defmodule Mejora.Properties do
     |> Property.changeset(attrs)
     |> Repo.update()
   end
+
+  def get_properties(filters) do
+    Property
+    |> from()
+    |> where(^dynamic_filters(filters))
+    |> Repo.all()
+  end
+
+  defp dynamic_filters(filters) when is_list(filters),
+    do: Enum.reduce(filters, dynamic(true), &filter_by/2)
+
+  defp filter_by({:street, street}, dynamic),
+    do: dynamic([t], ^dynamic and ilike(t.street, ^"%#{street}%"))
+
+  defp filter_by({:number, number}, dynamic),
+    do: dynamic([t], ^dynamic and ilike(t.number, ^"%#{number}%"))
+
+  defp filter_by({_, _}, dynamic), do: dynamic
 end

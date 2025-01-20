@@ -1,20 +1,21 @@
-defmodule Mejora.Boards.Board do
+defmodule Mejora.Neighborhoods.Quota do
   use Ecto.Schema
 
   import Ecto.Changeset
   import Mejora.Utils
 
-  alias __MODULE__, as: Board
+  alias __MODULE__, as: Quota
+  alias Mejora.Neighborhoods.Neighborhood
 
-  @required_fields [:name, :start_date, :end_date, :status]
-
-  schema "boards" do
-    field :name, :string
+  schema "quotas" do
+    field :amount, :decimal
     field :start_date, :date
     field :end_date, :date
-    field :status, Ecto.Enum, values: [:active, :inactive], default: :active
     field :comments, :string
+    field :status, Ecto.Enum, values: [:active, :inactive], default: :active
     field :index, :integer, virtual: true
+
+    belongs_to :neighborhood, Neighborhood
 
     timestamps()
   end
@@ -24,7 +25,7 @@ defmodule Mejora.Boards.Board do
 
     changeset
     |> cast(attrs, fields)
-    |> validate_required(@required_fields)
+    |> validate_required([:amount, :start_date, :end_date, :neighborhood_id])
   end
 
   def embedded_changeset({record, index}) do
@@ -35,17 +36,18 @@ defmodule Mejora.Boards.Board do
       |> parse_record()
       |> Map.put(:index, index)
 
-    %Board{}
+    %Quota{}
     |> cast(attrs, fields)
   end
 
   defp parse_record(record) do
     %{
-      name: Enum.at(record, 0),
+      amount: parse_number(Enum.at(record, 0)),
       start_date: parse_date(Enum.at(record, 1)),
       end_date: parse_date(Enum.at(record, 2)),
-      status: parse_status(Enum.at(record, 13)),
-      comments: Enum.at(record, 3)
+      comments: Enum.at(record, 4),
+      status: parse_status(Enum.at(record, 3)),
+      neighborhood_id: Enum.at(record, 5)
     }
   end
 end

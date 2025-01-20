@@ -26,6 +26,9 @@ defmodule MejoraWeb.Router do
 
     live_session :admin, on_mount: [{MejoraWeb.UserAuth, :ensure_authenticated}] do
       live "/dashboard", Live.AdminDashboard
+      live "/board", Live.Board
+      live "/projects", Live.Projects
+      live "/account", Live.Account
       live "/properties", Live.AdminProperties
     end
   end
@@ -89,7 +92,6 @@ defmodule MejoraWeb.Router do
 
     delete "/users/log_out", UserSessionController, :delete
     get "/user_account_state", PageController, :show
-
 
     live_session :current_user,
       on_mount: [{MejoraWeb.UserAuth, :mount_current_user}] do

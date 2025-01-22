@@ -2,8 +2,7 @@ defmodule Mejora.Transactions do
   import Ecto.Query, warn: false
 
   alias Mejora.Repo
-  alias Mejora.Transactions.Transaction
-  alias Mejora.Transactions.TransactionRow
+  alias Mejora.Transactions.{Invoice, Transaction, TransactionRow}
 
   %{
     date_range: %{lower: "", upper: ""}
@@ -15,7 +14,6 @@ defmodule Mejora.Transactions do
     %Transaction{}
     |> Transaction.changeset(attrs)
     |> Ecto.Changeset.put_assoc(:transaction_rows, transaction_row_attrs)
-    |> IO.inspect()
     |> Repo.insert()
   end
 
@@ -43,4 +41,24 @@ defmodule Mejora.Transactions do
       end
     end)
   end
+
+  def unpaid_invoices(property_id) do
+    filters = [status: :unpaid, property_id: property_id]
+
+    Invoice
+    |> from()
+    |> where(^dynamic_filters(filters))
+    |> Repo.all()
+  end
+
+  defp dynamic_filters(filters) when is_list(filters),
+    do: Enum.reduce(filters, dynamic(true), &filter_by/2)
+
+  defp filter_by({:status, status}, dynamic),
+    do: dynamic([i], ^dynamic and i.status == ^status)
+
+  defp filter_by({:property_id, property_id}, dynamic),
+    do: dynamic([i], ^dynamic and i.property_id == ^property_id)
+
+  defp filter_by({_, _}, dynamic), do: dynamic
 end

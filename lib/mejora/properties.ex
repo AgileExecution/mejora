@@ -31,7 +31,7 @@ defmodule Mejora.Properties do
     |> from()
     |> where(^dynamic_filters(filters))
     |> Repo.all()
-    |> Repo.preload(:transactions)
+    |> Repo.preload(:invoices)
   end
 
   defp dynamic_filters(filters) when is_list(filters),

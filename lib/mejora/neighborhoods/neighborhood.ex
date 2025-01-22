@@ -5,7 +5,7 @@ defmodule Mejora.Neighborhoods.Neighborhood do
   import Mejora.Utils
 
   alias __MODULE__, as: Neighborhood
-  alias Mejora.Transactions.Transaction
+  alias Mejora.Transactions.Invoice
 
   @required_fields [
     :name,
@@ -32,7 +32,7 @@ defmodule Mejora.Neighborhoods.Neighborhood do
     field :comments, :string
     field :index, :integer, virtual: true
 
-    has_many :transactions, Transaction, foreign_key: :association_id, references: :id
+    has_many :invoices, Invoice
 
     timestamps()
   end

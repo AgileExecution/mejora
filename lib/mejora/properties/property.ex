@@ -5,7 +5,7 @@ defmodule Mejora.Properties.Property do
   import Mejora.Utils
 
   alias Mejora.Properties.PropertyMembership
-  alias Mejora.Transactions.Transaction
+  alias Mejora.Transactions.Invoice
   alias __MODULE__, as: Property
 
   schema "properties" do
@@ -18,7 +18,7 @@ defmodule Mejora.Properties.Property do
 
     has_many :property_memberships, PropertyMembership
     has_many :users, through: [:property_memberships, :user]
-    has_many :transactions, Transaction, foreign_key: :association_id, references: :id
+    has_many :invoices, Invoice
 
     timestamps()
   end

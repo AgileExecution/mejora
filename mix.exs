@@ -97,6 +97,7 @@ defmodule Mejora.MixProject do
       {:ecto_fragment_extras, "~> 0.3.0"},
       {:ecto_ltree, "~> 0.4.0"},
       {:gen_smtp, "~> 1.1"},
+      {:heroicons_liveview, "~> 0.3.0"},
 
       # Development
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},

@@ -49,13 +49,15 @@ defmodule Mejora.Neighborhoods do
     Repo.all(Neighborhood)
   end
 
-  def current_quota(neighborhood_id), do:
-    Quota
-    |> from()
-    |> where(neighborhood_id: ^neighborhood_id, status: :active)
-    |> Repo.one()
+  def current_quota(neighborhood_id),
+    do:
+      Quota
+      |> from()
+      |> where(neighborhood_id: ^neighborhood_id, status: :active)
+      |> Repo.one()
 
-  def get_properties(neighborhood_id), do: Mejora.Properties.get_properties(neighborhood_id: neighborhood_id)
+  def get_properties(neighborhood_id),
+    do: Mejora.Properties.get_properties(neighborhood_id: neighborhood_id)
 
   def current_property_count(neighborhood_id) do
     Property

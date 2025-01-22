@@ -18,20 +18,6 @@ defmodule Mejora.Properties do
     Repo.all(Property)
   end
 
-  def list_properties_by_neighborhood(neighborhood_id) do
-    Repo.all(
-      from p in Property,
-        where: p.neighborhood_id == ^neighborhood_id,
-        select: %{
-          id: p.id,
-          street: p.street,
-          number: p.number,
-          status: p.status,
-          paid: p.paid
-        }
-    )
-  end
-
   def get_property!(id), do: Repo.get!(Property, id)
 
   def update_property(property, attrs) do
@@ -45,16 +31,20 @@ defmodule Mejora.Properties do
     |> from()
     |> where(^dynamic_filters(filters))
     |> Repo.all()
+    |> Repo.preload(:transactions)
   end
 
   defp dynamic_filters(filters) when is_list(filters),
     do: Enum.reduce(filters, dynamic(true), &filter_by/2)
 
   defp filter_by({:street, street}, dynamic),
-    do: dynamic([t], ^dynamic and ilike(t.street, ^"%#{street}%"))
+    do: dynamic([p], ^dynamic and ilike(p.street, ^"%#{street}%"))
 
   defp filter_by({:number, number}, dynamic),
-    do: dynamic([t], ^dynamic and ilike(t.number, ^"%#{number}%"))
+    do: dynamic([p], ^dynamic and ilike(p.number, ^"%#{number}%"))
+
+  defp filter_by({:neighborhood_id, neighborhood_id}, dynamic),
+    do: dynamic([p], ^dynamic and p.neighborhood_id == ^neighborhood_id)
 
   defp filter_by({_, _}, dynamic), do: dynamic
 end

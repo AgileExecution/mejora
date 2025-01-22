@@ -1,32 +1,37 @@
 defmodule MejoraWeb.Live.AdminProperties do
   use MejoraWeb, :live_view
 
+  alias Mejora.Neighborhoods
   alias Mejora.Properties
 
   @impl true
   def mount(_params, _session, %{assigns: %{current_user: current_user}} = socket) do
-    if current_user do
-      properties =
-        Properties.list_properties_by_neighborhood(current_user.neighborhood_id)
-        |> Enum.map(&assign_status_class(&1))
+    current_user = Mejora.Repo.preload(current_user, [:property_memberships, :properties])
+    property = current_user.properties |> Enum.at(0)
 
-      cuota_mensual = 350.00
-      numero_propiedades = length(properties)
-      cuota_colonia = cuota_mensual * numero_propiedades
+    properties =
+      property.neighborhood_id
+      |> Neighborhoods.get_properties()
+      |> Enum.map(&assign_status_class(&1))
 
-      {:ok,
-       socket
-       |> assign(:properties, properties)
-       |> assign(:cuota_mensual, cuota_mensual)
-       |> assign(:numero_propiedades, numero_propiedades)
-       |> assign(:cuota_colonia, cuota_colonia)}
-    else
+    property_count = Neighborhoods.current_property_count(property.neighborhood_id)
+    monthly_quota = Neighborhoods.current_quota(property.neighborhood_id)
+    neighborhood_quota = Neighborhoods.expected_monthly_quota(property.neighborhood_id)
+
+    {:ok,
+     socket
+     |> assign(:properties, properties)
+     |> assign(:monthly_quota, monthly_quota)
+     |> assign(:property_count, property_count)
+     |> assign(:neighborhood_quota, neighborhood_quota)}
+  end
+
+  def mount(_params, _session, socket),
+    do:
       {:ok,
        socket
        |> redirect(to: "/login")
        |> put_flash(:error, "Inicia sesión para continuar.")}
-    end
-  end
 
   @impl true
   def handle_event("toggle_status", %{"id" => id}, socket) do
@@ -34,8 +39,12 @@ defmodule MejoraWeb.Live.AdminProperties do
     new_status = if property.status == :active, do: :inactive, else: :active
     Properties.update_property(property, %{status: new_status})
 
+    current_user = Mejora.Repo.preload(socket.assigns.current_user, [:property_memberships, :properties])
+    property = current_user.properties |> Enum.at(0)
+
+
     updated_properties =
-      Properties.list_properties_by_neighborhood(socket.assigns.current_user.neighborhood_id)
+      Properties.get_properties(neighborhood_id: property.neighborhood_id)
       |> Enum.map(&assign_status_class(&1))
 
     {:noreply, assign(socket, :properties, updated_properties)}
@@ -58,7 +67,7 @@ defmodule MejoraWeb.Live.AdminProperties do
     cuota_actual = months_passed * 350
 
     pagado =
-      case Float.parse(property.paid || "0") do
+      case Float.parse("100.00" || "0") do
         {value, _} -> value
         :error -> 0.0
       end

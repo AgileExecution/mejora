@@ -67,7 +67,7 @@ defmodule MejoraWeb.Live.AdminProperties do
     cuota_actual = months_passed * 350
 
     pagado =
-      case Float.parse("100.00" || "0") do
+      case Float.parse("100.00") do
         {value, _} -> value
         :error -> 0.0
       end

@@ -39,9 +39,10 @@ defmodule MejoraWeb.Live.AdminProperties do
     new_status = if property.status == :active, do: :inactive, else: :active
     Properties.update_property(property, %{status: new_status})
 
-    current_user = Mejora.Repo.preload(socket.assigns.current_user, [:property_memberships, :properties])
-    property = current_user.properties |> Enum.at(0)
+    current_user =
+      Mejora.Repo.preload(socket.assigns.current_user, [:property_memberships, :properties])
 
+    property = current_user.properties |> Enum.at(0)
 
     updated_properties =
       Properties.get_properties(neighborhood_id: property.neighborhood_id)

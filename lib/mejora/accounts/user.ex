@@ -22,7 +22,6 @@ defmodule Mejora.Accounts.User do
     field :cellphone_number, :string
     field :curp, :string
     field :rfc, :string
-    field :neighborhood_id, :integer
     field :index, :integer, virtual: true
 
     has_many :property_memberships, PropertyMembership

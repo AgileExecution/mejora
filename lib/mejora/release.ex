@@ -25,4 +25,27 @@ defmodule Mejora.Release do
   defp load_app do
     Application.load(@app)
   end
+
+  def seed do
+    load_app()
+
+    for repo <- repos() do
+      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
+    end
+  end
+
+  defp seed_repo(repo) do
+    seed_path = priv_dir(repo, "seeds.exs")
+
+    if File.exists?(seed_path) do
+      IO.puts("Running seeds for #{inspect(repo)}")
+      Code.eval_file(seed_path)
+    end
+  end
+
+  defp priv_dir(repo, filename) do
+    repo_otp_app = repo.config()[:otp_app]
+    app_path = Application.app_dir(repo_otp_app)
+    Path.join([app_path, "priv/repo", filename])
+  end
 end

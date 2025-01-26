@@ -43,6 +43,7 @@ RUN mkdir config
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
 COPY config/config.exs config/${MIX_ENV}.exs config/
+COPY assets /app/assets
 RUN mix deps.compile
 
 COPY priv priv
@@ -52,6 +53,8 @@ COPY lib lib
 COPY assets assets
 
 # compile assets
+RUN mix assets.setup
+RUN mix assets.build
 RUN mix assets.deploy
 
 # Compile the release

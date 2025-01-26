@@ -26,25 +26,42 @@ defmodule Mejora.Properties do
     |> Repo.update()
   end
 
-  def get_properties(filters) do
-    Property
-    |> from()
-    |> where(^dynamic_filters(filters))
+  def get_properties(filters, order_by \\ []) do
+    query =
+      Property
+      |> where(^dynamic_filters(filters))
+
+    query =
+      if order_by != [] do
+        order_by(query, ^order_by)
+      else
+        query
+      end
+
+    query
     |> Repo.all()
     |> Repo.preload(:invoices)
   end
 
-  defp dynamic_filters(filters) when is_list(filters),
-    do: Enum.reduce(filters, dynamic(true), &filter_by/2)
+  defp dynamic_filters(filters) when is_list(filters) do
+    Enum.reduce(filters, dynamic(true), fn filter, dynamic_query ->
+      filter_by(filter, dynamic_query)
+    end)
+  end
 
-  defp filter_by({:street, street}, dynamic),
-    do: dynamic([p], ^dynamic and ilike(p.street, ^"%#{street}%"))
+  defp filter_by({:search_query, query}, dynamic) when not is_nil(query) and query != "" do
+    like_query = "%#{query}%"
 
-  defp filter_by({:number, number}, dynamic),
-    do: dynamic([p], ^dynamic and ilike(p.number, ^"%#{number}%"))
+    dynamic([p], ^dynamic and (ilike(p.street, ^like_query) or ilike(p.number, ^like_query)))
+  end
 
-  defp filter_by({:neighborhood_id, neighborhood_id}, dynamic),
-    do: dynamic([p], ^dynamic and p.neighborhood_id == ^neighborhood_id)
+  defp filter_by({:search_query, _}, dynamic), do: dynamic
+
+  defp filter_by({:neighborhood_id, neighborhood_id}, dynamic) when not is_nil(neighborhood_id) do
+    dynamic([p], ^dynamic and p.neighborhood_id == ^neighborhood_id)
+  end
+
+  defp filter_by({:neighborhood_id, _}, dynamic), do: dynamic
 
   defp filter_by({_, _}, dynamic), do: dynamic
 end

@@ -15,6 +15,29 @@
     </div>
   </div>
 
+  <div>
+    <!-- Buscador de texto -->
+    <input
+      type="text"
+      placeholder="Buscar por calle o número"
+      phx-debounce="300"
+      phx-keyup="filter_properties"
+      value={@search_query}
+      name ="query"
+    />
+  
+    <!-- Dropdown de estado -->
+    <form phx-submit="filter_status">
+      <select name="status">
+        <option value="" selected={@selected_status == ""}>Todos</option>
+        <option value="Al corriente" selected={@selected_status == "Al corriente"}>Al corriente</option>
+        <option value="Atrasado" selected={@selected_status == "Atrasado"}>Atrasado</option>
+        <option value="Adelantado" selected={@selected_status == "Adelantado"}>Adelantado</option>
+      </select>
+      <button type="submit">Filtrar</button>
+    </form>
+  </div>
+
   <div class="table-container">
     <table>
       <thead>
@@ -33,15 +56,19 @@
             <td><%= property.street %></td>
             <td><%= property.number %></td>
             <td>
-              <span class={["status", property.status_class]}>
-                <%= property.payment_status %>
+              <span class={["status", property.status]}>
+                <%= property.status_es %>
               </span>
             </td>
-            <td><%= property.cuota_actual %></td>
-            <td><%= 100 %></td>
+            <td><%= property.paid_months %></td>
+            <td><%= property.payment_status %></td>
             <td>
               <button phx-click="toggle_status" phx-value-id={property.id}>
-                <%= if property.status == :active, do: "Desactivar", else: "Activar" %>
+                <%= if property.active_status == :active do %>
+                  Desactivar
+                <% else %>
+                  Activar
+                <% end %>
               </button>
             </td>
           </tr>

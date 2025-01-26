@@ -18,6 +18,7 @@ defmodule Mejora.Application do
       # {Mejora.Worker, arg},
       # Start to serve requests, typically the last entry
       MejoraWeb.Endpoint,
+      TwMerge.Cache,
       {Task.Supervisor, name: Mejora.TaskSupervisor}
     ]
 

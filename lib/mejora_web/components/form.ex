@@ -2,6 +2,8 @@ defmodule MejoraWeb.Component.Form do
   @moduledoc false
   use MejoraWeb.Component
 
+  alias MejoraWeb.Component.Label
+
   @doc """
   Implement of form component. SaladUI doesn't define its own form, but it provides a set of form-related components to help you build your own form.
 
@@ -71,7 +73,7 @@ defmodule MejoraWeb.Component.Form do
       end
 
     ~H"""
-    <SaladUI.Label.label
+    <Label.label
       class={
         classes([
           @error && "text-destructive",
@@ -81,7 +83,7 @@ defmodule MejoraWeb.Component.Form do
       {@rest}
     >
       <%= render_slot(@inner_block) %>
-    </SaladUI.Label.label>
+    </Label.label>
     """
   end
 

@@ -104,7 +104,7 @@ defmodule Mejora.MixProject do
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:doctor, "~> 0.22.0", only: :dev},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:salad_ui, "~> 0.13.0", only: [:dev]},
+      {:salad_ui, "~> 0.14"},
       {:tails, "~> 0.1"},
 
       # Test

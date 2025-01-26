@@ -3,6 +3,7 @@ defmodule Mejora.Accounts.User do
 
   import Ecto.Changeset
   import Mejora.Utils
+  import Ecto.Query
 
   alias Mejora.Properties.{Property, PropertyMembership}
   alias Mejora.Repo
@@ -242,6 +243,28 @@ defmodule Mejora.Accounts.User do
       property_memberships: get_property_memberships(record)
     }
   end
+
+  def get_neighborhood_from_board_membership(user) do
+    board_membership =
+      Mejora.Boards.BoardMembership
+      |> where([bm], bm.user_id == ^user.id)
+      |> Repo.one()
+      |> Repo.preload(:board)
+
+    case board_membership do
+      nil ->
+        {:error, "No board membership found for user"}
+
+      %Mejora.Boards.BoardMembership{board: %Mejora.Boards.Board{neighborhood_id: neighborhood_id}} ->
+        neighborhood = Repo.get(Mejora.Neighborhoods.Neighborhood, neighborhood_id)
+        {:ok, neighborhood}
+
+      %Mejora.Boards.BoardMembership{} ->
+        {:error, "Board membership found, but board is not loaded"}
+    end
+  end
+
+
 
   defp get_property_memberships(record) do
     property =

@@ -18,20 +18,6 @@ defmodule Mejora.Properties do
     Repo.all(Property)
   end
 
-  def list_properties_by_neighborhood(neighborhood_id) do
-    Repo.all(
-      from p in Property,
-        where: p.neighborhood_id == ^neighborhood_id,
-        select: %{
-          id: p.id,
-          street: p.street,
-          number: p.number,
-          status: p.status,
-          paid: p.paid
-        }
-    )
-  end
-
   def get_property!(id), do: Repo.get!(Property, id)
 
   def update_property(property, attrs) do
@@ -40,21 +26,42 @@ defmodule Mejora.Properties do
     |> Repo.update()
   end
 
-  def get_properties(filters) do
-    Property
-    |> from()
-    |> where(^dynamic_filters(filters))
+  def get_properties(filters, order_by \\ []) do
+    query =
+      Property
+      |> where(^dynamic_filters(filters))
+
+    query =
+      if order_by != [] do
+        order_by(query, ^order_by)
+      else
+        query
+      end
+
+    query
     |> Repo.all()
+    |> Repo.preload(:transactions)
   end
 
-  defp dynamic_filters(filters) when is_list(filters),
-    do: Enum.reduce(filters, dynamic(true), &filter_by/2)
+  defp dynamic_filters(filters) when is_list(filters) do
+    Enum.reduce(filters, dynamic(true), fn filter, dynamic_query ->
+      filter_by(filter, dynamic_query)
+    end)
+  end
 
-  defp filter_by({:street, street}, dynamic),
-    do: dynamic([t], ^dynamic and ilike(t.street, ^"%#{street}%"))
+  defp filter_by({:search_query, query}, dynamic) when not is_nil(query) and query != "" do
+    like_query = "%#{query}%"
 
-  defp filter_by({:number, number}, dynamic),
-    do: dynamic([t], ^dynamic and ilike(t.number, ^"%#{number}%"))
+    dynamic([p], ^dynamic and (ilike(p.street, ^like_query) or ilike(p.number, ^like_query)))
+  end
+
+  defp filter_by({:search_query, _}, dynamic), do: dynamic
+
+  defp filter_by({:neighborhood_id, neighborhood_id}, dynamic) when not is_nil(neighborhood_id) do
+    dynamic([p], ^dynamic and p.neighborhood_id == ^neighborhood_id)
+  end
+
+  defp filter_by({:neighborhood_id, _}, dynamic), do: dynamic
 
   defp filter_by({_, _}, dynamic), do: dynamic
 end

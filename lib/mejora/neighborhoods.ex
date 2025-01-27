@@ -1,7 +1,8 @@
 defmodule Mejora.Neighborhoods do
   import Ecto.Query, warn: false
 
-  alias Mejora.Neighborhoods.Neighborhood
+  alias Mejora.Neighborhoods.{Neighborhood, Quota}
+  alias Mejora.Properties.Property
   alias Mejora.Repo
 
   def get(id) do
@@ -46,5 +47,29 @@ defmodule Mejora.Neighborhoods do
 
   def get_all do
     Repo.all(Neighborhood)
+  end
+
+  def current_quota(neighborhood_id),
+    do:
+      Quota
+      |> from()
+      |> where(neighborhood_id: ^neighborhood_id, status: :active)
+      |> Repo.one()
+
+  def get_properties(neighborhood_id),
+    do: Mejora.Properties.get_properties(neighborhood_id: neighborhood_id)
+
+  def current_property_count(neighborhood_id) do
+    Property
+    |> from()
+    |> where([p], p.neighborhood_id == ^neighborhood_id)
+    |> select([p], count(p.id))
+    |> Repo.one()
+  end
+
+  def expected_monthly_quota(neighborhood_id) do
+    monthly_quota = current_quota(neighborhood_id)
+    property_count = current_property_count(neighborhood_id)
+    Decimal.mult(Decimal.new(monthly_quota.amount), Decimal.new(property_count))
   end
 end

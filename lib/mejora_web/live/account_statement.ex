@@ -1,16 +1,12 @@
 defmodule MejoraWeb.Live.AccountStatement do
   use MejoraWeb, :live_view
   alias Mejora.Repo
-  alias Mejora.Properties.PropertyMembership
-  alias Mejora.Accounts.{User, UserToken, UserNotifier}
   alias Mejora.Neighborhoods.Quota
   alias Mejora.Transactions.Transaction
 
   def mount(_params, _session, socket) do
 
-    quota = Quota |> Ecto.Query.last() |> Repo.one()
     neighborhood_id = 1
-
     quota = Repo.get_by(Quota, [neighborhood_id: neighborhood_id, status: "active"])
 
     transactions = Repo.all(Transaction)

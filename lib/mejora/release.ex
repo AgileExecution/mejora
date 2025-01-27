@@ -26,12 +26,40 @@ defmodule Mejora.Release do
     Application.load(@app)
   end
 
-  def seed do
+  def seed(opts \\ []) do
     load_app()
 
     for repo <- repos() do
+      if Keyword.get(opts, :truncate, false),
+        do: do_truncate()
+
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
     end
+  end
+
+  defp do_truncate do
+    [
+      "neighborhoods",
+      "properties",
+      "users",
+      "boards",
+      "providers",
+      "invoices",
+      "quotas",
+      "board_memberships",
+      "transaction_rows",
+      "transactions",
+      "property_memberships"
+    ]
+    |> Enum.each(fn table ->
+      case Mejora.Repo.query("TRUNCATE TABLE #{table} CASCADE") do
+        {:ok, _result} ->
+          IO.puts("#{table} table truncated successfully.")
+
+        {:error, reason} ->
+          IO.puts("Failed to truncate #{table} table: #{inspect(reason)}")
+      end
+    end)
   end
 
   defp seed_repo(repo) do

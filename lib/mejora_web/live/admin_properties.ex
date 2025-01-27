@@ -40,7 +40,7 @@ defmodule MejoraWeb.Live.AdminProperties do
          |> assign(:properties, [])
          |> assign(:all_properties, [])
          |> assign(:property_count, 0)
-         |> assign(:monthly_quota, 0)
+         |> assign(:monthly_quota, %{amount: 0})
          |> assign(:neighborhood_quota, 0)
          |> assign(:neighborhood, nil)
          |> assign(:search_query, "")

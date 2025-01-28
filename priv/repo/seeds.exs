@@ -15,7 +15,8 @@ alias Mejora.Neighborhoods.{Neighborhood, Quota}
 alias Mejora.Properties.Property
 alias Mejora.Accounts.User
 alias Mejora.Providers.Provider
-alias Mejora.Transactions.Transaction
+alias Mejora.Transactions.PaymentNotice
+alias Mejora.Transactions.PurchaseNotice
 
 [
   {
@@ -233,7 +234,7 @@ end)
       {2024, 7, 11},
       "Mensualidad faltante",
       "200.00",
-      :income
+      :sale
     ],
     0
   },
@@ -244,14 +245,14 @@ end)
       {2024, 8, 11},
       "Mensualidad de dos meses",
       "700.00",
-      :income
+      :sale
     ],
     1
   }
 ]
 |> Enum.each(fn record ->
   record
-  |> Transaction.embedded_changeset()
+  |> PaymentNotice.embedded_changeset()
   |> Repo.insert!()
 end)
 
@@ -263,7 +264,7 @@ end)
       "300",
       nil,
       "Residencial 15 de Mayo II",
-      :outcome
+      :purchase
     ],
     0
   },
@@ -274,13 +275,47 @@ end)
       "100",
       nil,
       "Residencial 15 de Mayo II",
-      :outcome
+      :purchase
     ],
     1
   }
 ]
 |> Enum.each(fn record ->
   record
-  |> Transaction.embedded_changeset()
+  |> PurchaseNotice.embedded_changeset()
   |> Repo.insert!()
+end)
+
+[
+  {
+    [
+      "Colima",
+      "300",
+      {2024, 8, 11},
+      "Mensualidad faltante",
+      "200.00",
+      :sale
+    ],
+    0
+  },
+  {
+    [
+      "15 de Mayo",
+      "790",
+      {2024, 9, 11},
+      "Mensualidad de dos meses",
+      "700.00",
+      :sale
+    ],
+    1
+  }
+]
+|> Enum.each(fn record ->
+  record
+  |> PaymentNotice.embedded_changeset()
+  |> Repo.insert!()
+  |> then(fn record ->
+    record = Ecto.Changeset.change(record, status: :unpaid)
+    Repo.update(record)
+  end)
 end)

@@ -8,12 +8,10 @@ defmodule Mejora.Repo.Migrations.CreateTransactions do
       add :transaction_type, :string
       add :payment_date, :utc_datetime
       add :comments, :string
-      add :association_id, :integer, null: false
-      add :association_type, :string, null: false
+      add :association_type, :string
+      add :association_id, :integer
 
       timestamps()
     end
-
-    create index(:transactions, [:association_id, :association_type])
   end
 end

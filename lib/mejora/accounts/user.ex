@@ -244,6 +244,27 @@ defmodule Mejora.Accounts.User do
     }
   end
 
+  def get_neighborhood_from_property_membership(user) do
+    property =
+      User
+      |> Repo.get(user.id)
+      |> Repo.preload(:properties)
+      |> then(fn user -> user.properties end)
+      |> then(fn
+        [] -> %{neighborhood_id: nil}
+        nil -> %{neighborhood_id: nil}
+        properties -> List.first(properties)
+      end)
+
+    case Repo.get(Mejora.Neighborhoods.Neighborhood, property.neighborhood_id) do
+      nil ->
+        {:error, "not found"}
+
+      %Mejora.Neighborhoods.Neighborhood{} = neighborhood ->
+        {:ok, neighborhood}
+    end
+  end
+
   def get_neighborhood_from_board_membership(user) do
     board_membership =
       Mejora.Boards.BoardMembership
@@ -255,7 +276,9 @@ defmodule Mejora.Accounts.User do
       nil ->
         {:error, "No board membership found for user"}
 
-      %Mejora.Boards.BoardMembership{board: %Mejora.Boards.Board{neighborhood_id: neighborhood_id}} ->
+      %Mejora.Boards.BoardMembership{
+        board: %Mejora.Boards.Board{neighborhood_id: neighborhood_id}
+      } ->
         neighborhood = Repo.get(Mejora.Neighborhoods.Neighborhood, neighborhood_id)
         {:ok, neighborhood}
 
@@ -263,8 +286,6 @@ defmodule Mejora.Accounts.User do
         {:error, "Board membership found, but board is not loaded"}
     end
   end
-
-
 
   defp get_property_memberships(record) do
     property =

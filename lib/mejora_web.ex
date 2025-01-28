@@ -106,7 +106,10 @@ defmodule MejoraWeb do
         Input,
         Menu,
         Sheet,
-        Table
+        Table,
+        Label,
+        Form,
+        Select
       }
 
       # Shortcut for generating JS commands

@@ -1,6 +1,6 @@
 defmodule Mejora.RBAC do
   @roles_permissions %{
-    "admin" => ["view_stats", "manage_users", "landing"],
+    "admin" => ["billing", "view_stats", "manage_users", "landing"],
     "bystander" => ["landing"],
     "user" => ["view_stats", "landing"]
   }

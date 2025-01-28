@@ -13,8 +13,8 @@
         <p style="color:rgb(122,182,116)">Presupuesto Actual</p>
       </span>
       <span class="flex flex-row justify-between font-bold" style="font-size:20px">
-        <p><%= raw(@money.anual_budget) %></p>
-        <p><%= raw(@money.actual_budget) %></p>
+        <p>{raw(@money.anual_budget)}</p>
+        <p>{raw(@money.actual_budget)}</p>
       </span>
       <hr />
 
@@ -27,16 +27,16 @@
               stroke-width="20"
               fill="none"
             />
-            <%= raw(@svg_progress) %>
-            <%= raw(@circle_progress) %>
+            {raw(@svg_progress)}
+            {raw(@circle_progress)}
           </svg>
         </span>
         <span class="text-center" style="bottom:94px; position:relative">
           <p style="font-size:5vw; font-weight:700; line-height:64px">
-            <%= raw(@money.percentage) %>%
+            {raw(@money.percentage)}%
           </p>
           <p>
-            Pendiente: <strong><%= raw(@money.debt) %></strong>
+            Pendiente: <strong>{raw(@money.debt)}</strong>
           </p>
         </span>
       </div>
@@ -149,7 +149,7 @@
       <%= for date <- @payment_dates do %>
         <article id="payment-history-cell" class="font-semibold">
           <span class="flex flex-row justify-between w-full">
-            <p><%= date %></p>
+            <p>{date}</p>
             <p class="green-color">$750.00</p>
           </span>
 

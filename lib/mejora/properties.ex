@@ -40,7 +40,7 @@ defmodule Mejora.Properties do
 
     query
     |> Repo.all()
-    |> Repo.preload(:invoices)
+    |> Repo.preload(:payment_notices)
   end
 
   defp dynamic_filters(filters) when is_list(filters) do

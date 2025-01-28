@@ -2,7 +2,7 @@ defmodule Mejora.Transactions do
   import Ecto.Query, warn: false
 
   alias Mejora.Repo
-  alias Mejora.Transactions.{Invoice, Transaction, TransactionRow}
+  alias Mejora.Transactions.{PaymentNotice, PurchaseNotice, Transaction, TransactionRow}
 
   %{
     date_range: %{lower: "", upper: ""}
@@ -42,10 +42,19 @@ defmodule Mejora.Transactions do
     end)
   end
 
-  def unpaid_invoices(property_id) do
+  def unpaid_payment_notices(property_id) do
     filters = [status: :unpaid, property_id: property_id]
 
-    Invoice
+    PaymentNotice
+    |> from()
+    |> where(^dynamic_filters(filters))
+    |> Repo.all()
+  end
+
+  def unpaid_purchase_notices(neighborhood_id) do
+    filters = [status: :unpaid, neighborhood_id: neighborhood_id]
+
+    PurchaseNotice
     |> from()
     |> where(^dynamic_filters(filters))
     |> Repo.all()

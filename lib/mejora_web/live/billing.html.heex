@@ -7,16 +7,18 @@
 
   <.card class="w-[350px]">
     <.card_header>
-      <.card_title>Total de Adeudos: <%= Enum.count(@unpaid_invoices) %></.card_title>
+      <.card_title>Total de Adeudos: {Enum.count(@unpaid_payment_notices)}</.card_title>
       <.card_description>
-        Emisión <%= @invoice.inserted_at %> | Vencimiento <%= @invoice.due_date %> <br />
+        Emisión {@payment_notice.inserted_at} | Vencimiento {@payment_notice.due_date} <br />
         <strong>
-          Importe: $<%= pending_amount(@unpaid_invoices) %> |  Pagado: $0.00  | Pendiente: $<%= pending_amount(@unpaid_invoices) %>
+          Importe: ${pending_amount(@unpaid_payment_notices)} |  Pagado: $0.00  | Pendiente: ${pending_amount(
+            @unpaid_payment_notices
+          )}
         </strong>
       </.card_description>
     </.card_header>
     <.card_content class="flex justify-center">
-      $<%= pending_amount(@unpaid_invoices) %>
+      ${pending_amount(@unpaid_payment_notices)}
     </.card_content>
     <.card_footer class="flex justify-between"></.card_footer>
   </.card>
@@ -28,7 +30,7 @@
       </.card_description>
     </.card_header>
     <.card_content class="flex justify-center">
-      <.form :let={f} for={%{}} class="w-2/3 space-y-6">
+      <.form :let={_f} for={%{}} class="w-2/3 space-y-6">
         <.select
           :let={select}
           id="payment"

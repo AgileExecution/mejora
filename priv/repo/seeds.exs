@@ -15,7 +15,8 @@ alias Mejora.Neighborhoods.{Neighborhood, Quota}
 alias Mejora.Properties.Property
 alias Mejora.Accounts.User
 alias Mejora.Providers.Provider
-alias Mejora.Transactions.Invoice
+alias Mejora.Transactions.PaymentNotice
+alias Mejora.Transactions.PurchaseNotice
 
 [
   {
@@ -251,7 +252,7 @@ end)
 ]
 |> Enum.each(fn record ->
   record
-  |> Invoice.embedded_changeset()
+  |> PaymentNotice.embedded_changeset()
   |> Repo.insert!()
 end)
 
@@ -281,7 +282,7 @@ end)
 ]
 |> Enum.each(fn record ->
   record
-  |> Invoice.embedded_changeset()
+  |> PurchaseNotice.embedded_changeset()
   |> Repo.insert!()
 end)
 
@@ -311,7 +312,7 @@ end)
 ]
 |> Enum.each(fn record ->
   record
-  |> Invoice.embedded_changeset()
+  |> PaymentNotice.embedded_changeset()
   |> Repo.insert!()
   |> then(fn record ->
     record = Ecto.Changeset.change(record, status: :unpaid)

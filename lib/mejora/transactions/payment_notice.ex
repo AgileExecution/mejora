@@ -1,28 +1,28 @@
-defmodule Mejora.Transactions.Invoice do
+defmodule Mejora.Transactions.PaymentNotice do
   use Ecto.Schema
 
   import Ecto.Changeset
   import Mejora.Utils
 
-  alias Ecto.Adapter.Transaction
-  alias Mejora.Neighborhoods.Neighborhood
+  alias Mejora.Properties.Property
   alias Mejora.Transactions.Transaction
 
-  alias __MODULE__, as: Invoice
+  alias __MODULE__, as: PaymentNotice
 
-  schema "invoices" do
-    field :transaction_type, Ecto.Enum, values: [:sale, :purchase, :other]
+  schema "payment_notices" do
     field :due_date, :date
     field :invoice_number, :string
     field :total, :decimal
     field :status, Ecto.Enum, values: [:unpaid, :pending, :paid, :cancelled]
     field :comments, :string
     field :metadata, :map
-    field :property_id, :integer
     field :index, :integer, virtual: true
 
-    belongs_to :neighborhood, Neighborhood
-    has_many :transactions, Transaction
+    belongs_to :property, Property
+
+    has_many :transactions, Transaction,
+      where: [association_type: "PaymentNotice"],
+      foreign_key: :association_id
 
     timestamps()
   end
@@ -35,27 +35,16 @@ defmodule Mejora.Transactions.Invoice do
       |> parse_record()
       |> Map.put(:index, index)
 
-    %Invoice{}
+    %PaymentNotice{}
     |> cast(attrs, fields)
     |> cast_assoc(:transactions, with: &Transaction.changeset/2)
   end
 
   def parse_record(record) do
-    if Enum.at(record, 5) == :sale,
-      do: do_parse_sale(record),
-      else: do_parse_purchase(record)
-  end
-
-  defp do_parse_sale(record) do
     property =
       [street: Enum.at(record, 0), number: Enum.at(record, 1)]
       |> Mejora.Properties.get_properties()
       |> List.first()
-      |> maybe_nil_record()
-
-    neighborhood =
-      Mejora.Neighborhoods.Neighborhood
-      |> Mejora.Repo.get_by(name: Enum.at(record, 4))
       |> maybe_nil_record()
 
     date = parse_datetime(Enum.at(record, 2))
@@ -64,10 +53,8 @@ defmodule Mejora.Transactions.Invoice do
       status: :paid,
       due_date: date,
       comments: Enum.at(record, 3),
-      transaction_type: :sale,
       total: Enum.at(record, 4),
       property_id: property.id,
-      neighborhood_id: neighborhood.id,
       transactions: [
         %{
           total_amount: Enum.at(record, 4),
@@ -76,33 +63,6 @@ defmodule Mejora.Transactions.Invoice do
           transaction_rows: [
             %{
               amount: Enum.at(record, 4),
-              date: date
-            }
-          ]
-        }
-      ]
-    }
-  end
-
-  defp do_parse_purchase(record) do
-    neighborhood = Mejora.Repo.get_by(Mejora.Neighborhoods.Neighborhood, name: Enum.at(record, 4))
-    date = parse_datetime(Enum.at(record, 0))
-
-    %{
-      status: :paid,
-      due_date: date,
-      comments: Enum.at(record, 3),
-      transaction_type: :sale,
-      total: Enum.at(record, 2),
-      neighborhood_id: neighborhood.id,
-      transactions: [
-        %{
-          total_amount: Enum.at(record, 2),
-          payment_date: date,
-          comments: Enum.at(record, 3),
-          transaction_rows: [
-            %{
-              amount: Enum.at(record, 2),
               date: date
             }
           ]

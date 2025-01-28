@@ -3,7 +3,7 @@ defmodule Mejora.Transactions.Transaction do
 
   import Ecto.Changeset
 
-  alias Mejora.Transactions.{Invoice, TransactionRow}
+  alias Mejora.Transactions.TransactionRow
 
   @required_fields [
     :total_amount,
@@ -17,8 +17,9 @@ defmodule Mejora.Transactions.Transaction do
     field :comments, :string
     field :date_range, :map, virtual: true
     field :index, :integer, virtual: true
+    field :association_type, :string
+    field :association_id, :integer
 
-    belongs_to :invoice, Invoice
     has_many :transaction_rows, TransactionRow
 
     timestamps()

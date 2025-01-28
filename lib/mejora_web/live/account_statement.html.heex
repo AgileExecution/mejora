@@ -110,10 +110,13 @@
               mask="url(#path-5-inside-4_1_630)"
             />
           </g>
+          <%= raw(@content.svg.status) %>
         </svg>
 
         <span class="text-center" style="bottom:133px; position:relative">
-          <p style="font-size:82px; font-weight:700">90%</p>
+          <p style="font-size:4vw; font-weight:700">
+            <%= @content.money.percentage %>%
+          </p>
           <p style="font-weight:700">Tus pagos anuales</p>
           <p style="font-weight:100">Actualizado Nov 24, 2024</p>
         </span>

@@ -9,7 +9,7 @@ defmodule MejoraWeb.Live.AccountStatement do
     quota = Repo.get_by(Quota, [neighborhood_id: neighborhood_id, status: "active"])
 
     transactions = Repo.all(Transaction)
-    # IO.inspect(current_user)
+    IO.inspect(current_user)
 
     # ----------------------------------------------
     # ----------------------------------------------

@@ -30,6 +30,7 @@ defmodule MejoraWeb.Router do
       live "/projects", Live.Projects
       live "/account", Live.Account
       live "/properties", Live.AdminProperties
+      # live "/payments", Live.AdminPaymentView
     end
   end
 
@@ -97,6 +98,7 @@ defmodule MejoraWeb.Router do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
       live "/users/account_statement", Live.AccountStatement
+      live "/admin/payments", Live.AdminPaymentView
     end
   end
 end

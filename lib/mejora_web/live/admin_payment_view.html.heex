@@ -1,0 +1,38 @@
+<section style="width:80vw; margin-left:10vw">
+  <h2 class="header_II w-full text-center uppercase">
+    Registro de Pagos - 2024
+  </h2>
+
+  <section>
+    <table class="main-table montserrat-font">
+      <tbody>
+        <tr>
+          <td> Calle </td>
+          <td> Numero </td>
+          <%= for month <- @content.table.months do %>
+            <td> <%= month %> </td>
+          <% end %>
+        </tr>
+
+        <%= for data <- @content.table.content do %>
+          <tr>
+            <td> <%= data.street %> </td>
+            <td> <%= data.number %> </td>
+
+            <%= for month <- @content.table.months do %>
+              <td>
+                <%= if Enum.member?(data.payed_months, month) do %>
+                  <input type="checkbox" checked />
+                <% else %>
+                  <input type="checkbox" />
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+  </section>
+
+</section>

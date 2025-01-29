@@ -3,10 +3,11 @@ defmodule Mejora.Properties.Status do
   alias Mejora.Repo
   alias Mejora.Neighborhoods.Quota
   alias Mejora.Properties.Property
-  alias Mejora.Transactions.Transaction
+  alias Mejora.Transactions.{PaymentNotice, Transaction}
 
   defp get_neighborhood_id(property_id) do
     property = Repo.get(Property, property_id)
+
     case property do
       nil -> {:error, "Property not found"}
       _ -> {:ok, property.neighborhood_id}
@@ -58,15 +59,15 @@ defmodule Mejora.Properties.Status do
 
         transaction_sum =
           Transaction
-          |> join(:inner, [t], tr in assoc(t, :transaction_rows))
+          |> join(:inner, [t], payment_notice in PaymentNotice, on: t.association_type == "PaymentNotice" and t.association_id == payment_notice.id)
+          |> join(:inner, [t, pn], tr in assoc(t, :transaction_rows))
           |> where(
-            [t, tr],
-            t.association_type == "Property" and
-              t.association_id == ^property_id and
+            [t, pn, tr],
+              pn.property_id == ^property_id and
               tr.date >= ^start_date and
               tr.date <= ^end_date
           )
-          |> select([t, tr], sum(tr.amount))
+          |> select([t, i, tr], sum(tr.amount))
           |> Repo.one()
           |> Kernel.||(Decimal.new(0))
 

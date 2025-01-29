@@ -1,7 +1,7 @@
 <.flash_group flash={@flash} />
-<%= @inner_content %>
+{@inner_content}
 <footer class="px-2 absolute bottom-0 w-full">
   <p class="bg-brand/5 text-brand leading-6 text-xs text-right">
-    v<%= Application.spec(:phoenix, :vsn) %>
+    v{Application.spec(:phoenix, :vsn)}
   </p>
 </footer>

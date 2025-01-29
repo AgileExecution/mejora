@@ -28,7 +28,7 @@ defmodule MejoraWeb.Router do
       live "/dashboard", Live.AdminDashboard
       live "/board", Live.Board
       live "/projects", Live.Projects
-      live "/account", Live.Account
+      live "/billing", Live.Billing
       live "/properties", Live.AdminProperties
       # live "/payments", Live.AdminPaymentView
     end

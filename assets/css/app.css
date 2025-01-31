@@ -202,12 +202,12 @@ table td {
   background-color: #f7f6fe !important;
 }
 
-[type='checkbox'], [type='checkbox']:checked {
+.green-type:checked {
   background-color: #38cb38;
   box-shadow: none
 }
 
-[type='checkbox']:checked:hover, [type='checkbox']:checked:focus {
+.green-type:checked:hover, .green-type:checked:focus {
   background-color: #04ae04;
   --tw-ring-color: #04ae04;
   box-shadow: none !important;

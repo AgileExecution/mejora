@@ -3,6 +3,26 @@
     Registro de Pagos - 2024
   </h2>
 
+  <section class="flex flex-row justify-between">
+    <span class="flex flex-row">
+      <p>Show</p>
+      <select name="select">
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+      </select>
+      <p>entries</p>
+    </span>
+
+
+    <button>
+      <img
+              class="block h-12 w-auto"
+              src={static_path(MejoraWeb.Endpoint, "/images/settings.svg")}
+              alt="Junta de Mejoras"
+            />
+    </button>
+  </section>
   <section>
     <table class="main-table montserrat-font">
       <tbody>
@@ -21,11 +41,11 @@
 
             <%= for month <- @content.table.months do %>
               <td>
-                <%= if Enum.member?(data.payed_months, month) do %>
-                  <input type="checkbox" checked />
-                <% else %>
-                  <input type="checkbox" />
-                <% end %>
+                <input
+                  class="green-type"
+                  type="checkbox"
+                  checked={Enum.member?(data.payed_months, month)}
+                   />
               </td>
             <% end %>
           </tr>
@@ -33,6 +53,7 @@
 
       </tbody>
     </table>
+
   </section>
 
 </section>

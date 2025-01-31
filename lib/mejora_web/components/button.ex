@@ -37,7 +37,7 @@ defmodule MejoraWeb.Component.Button do
       }
       {@rest}
     >
-      {render_slot(@inner_block)}
+      {render_slot(@inner_block)} his
     </button>
     """
   end

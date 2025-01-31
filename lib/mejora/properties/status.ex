@@ -3,7 +3,19 @@ defmodule Mejora.Properties.Status do
   alias Mejora.Repo
   alias Mejora.Neighborhoods.Quota
   alias Mejora.Properties.Property
-  alias Mejora.Transactions.{PaymentNotice, Transaction}
+  alias Mejora.Transactions.PaymentNotice
+
+  def get_property_status(property_id) do
+    expected_amount = get_expected_amount(property_id)
+    transactions_total = get_transactions_total(property_id)
+
+    cond do
+      Decimal.compare(transactions_total, expected_amount) == :eq -> {:ok, :current}
+      Decimal.compare(transactions_total, expected_amount) == :lt -> {:ok, :late}
+      Decimal.compare(transactions_total, expected_amount) == :gt -> {:ok, :advance}
+      true -> {:error, "Unable to determine status"}
+    end
+  end
 
   defp get_neighborhood_id(property_id) do
     property = Repo.get(Property, property_id)
@@ -45,51 +57,12 @@ defmodule Mejora.Properties.Status do
   end
 
   def get_transactions_total(property_id) do
-    with {:ok, neighborhood_id} <- get_neighborhood_id(property_id) do
-      Quota
-      |> where(
-        [q],
-        q.neighborhood_id == ^neighborhood_id and
-          q.status == :active
-      )
-      |> Repo.all()
-      |> Enum.reduce(Decimal.new(0), fn quota, acc ->
-        start_date = quota.start_date
-        end_date = quota.end_date || Date.utc_today()
+    query =
+      from pn in PaymentNotice,
+        where: pn.property_id == ^property_id and pn.status == :paid,
+        select: sum(pn.total)
 
-        transaction_sum =
-          Transaction
-          |> join(:inner, [t], payment_notice in PaymentNotice, on: t.association_type == "PaymentNotice" and t.association_id == payment_notice.id)
-          |> join(:inner, [t, pn], tr in assoc(t, :transaction_rows))
-          |> where(
-            [t, pn, tr],
-              pn.property_id == ^property_id and
-              tr.date >= ^start_date and
-              tr.date <= ^end_date
-          )
-          |> select([t, i, tr], sum(tr.amount))
-          |> Repo.one()
-          |> Kernel.||(Decimal.new(0))
-
-        Decimal.add(transaction_sum, acc)
-      end)
-    else
-      {:error, reason} ->
-        IO.inspect(reason, label: "Error fetching neighborhood_id")
-        Decimal.new(0)
-    end
-  end
-
-  def get_property_status(property_id) do
-    expected_amount = get_expected_amount(property_id)
-    transactions_total = get_transactions_total(property_id)
-
-    cond do
-      Decimal.compare(transactions_total, expected_amount) == :eq -> {:ok, :current}
-      Decimal.compare(transactions_total, expected_amount) == :lt -> {:ok, :late}
-      Decimal.compare(transactions_total, expected_amount) == :gt -> {:ok, :advance}
-      true -> {:error, "Unable to determine status"}
-    end
+    Repo.one(query) || Decimal.new(0)
   end
 
   defp calculate_months_passed(start_date, end_date, cutoff_day) do

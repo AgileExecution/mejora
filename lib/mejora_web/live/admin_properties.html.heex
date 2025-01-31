@@ -10,21 +10,21 @@
     <div class="card1 flex items-center justify-between p-4 rounded-lg shadow-md w-64">
       <div>
         <p class="title-card">Cuota Mensual por Casa</p>
-        <h2 class="number-card">$<%= @monthly_quota.amount %></h2>
+        <h2 class="number-card">${@monthly_quota.amount}</h2>
       </div>
       <Heroicons.Outline.currency_dollar class="w-14 h-14" />
     </div>
     <div class="card2 flex items-center justify-between p-4 rounded-lg shadow-md w-64">
       <div>
         <p class="title-card">Número Propiedades</p>
-        <h2 class="number-card"><%= @property_count %></h2>
+        <h2 class="number-card">{@property_count}</h2>
       </div>
       <Heroicons.Outline.home class="w-14 h-14" />
     </div>
     <div class="card3 flex items-center justify-between p-4 rounded-lg shadow-md w-64">
       <div>
         <p class="title-card">Presupuesto de Mantenimiento Mensual</p>
-        <h2 class="number-card">$<%= @neighborhood_quota %></h2>
+        <h2 class="number-card">${@neighborhood_quota}</h2>
       </div>
       <Heroicons.Outline.user_group class="w-14 h-14" />
     </div>
@@ -32,7 +32,10 @@
 
   <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
     <form phx-change="per_page_change" class="w-full sm:w-auto">
-      <label for="per_page" class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left">
+      <label
+        for="per_page"
+        class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left"
+      >
         Mostrar:
       </label>
       <select
@@ -46,7 +49,10 @@
     </form>
 
     <div class="w-full sm:w-auto">
-      <label for="search_query" class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left">
+      <label
+        for="search_query"
+        class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left"
+      >
         Búsqueda de propiedades
       </label>
       <input
@@ -60,10 +66,12 @@
         name="query"
       />
     </div>
-  
-    <!-- Select para filtrar por estado -->
+    
     <form phx-change="filter_status" class="w-full sm:w-auto">
-      <label for="status" class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left">
+      <label
+        for="status"
+        class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left"
+      >
         Estatus
       </label>
       <select
@@ -72,7 +80,9 @@
         class="w-full sm:w-40 h-12 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="" selected={@selected_status == ""}>Todos</option>
-        <option value="Al corriente" selected={@selected_status == "Al corriente"}>Al corriente</option>
+        <option value="Al corriente" selected={@selected_status == "Al corriente"}>
+          Al corriente
+        </option>
         <option value="Atrasado" selected={@selected_status == "Atrasado"}>Atrasado</option>
         <option value="Adelantado" selected={@selected_status == "Adelantado"}>Adelantado</option>
       </select>
@@ -94,17 +104,21 @@
       <tbody>
         <%= for {property, _index} <- Enum.with_index(@properties) do %>
           <tr class="odd:bg-gray-100 even:bg-white w-full">
-            <td class="px-4 py-3 border-none"><%= property.street %></td>
-            <td class="px-4 py-3 border-none"><%= property.number %></td>
+            <td class="px-4 py-3 border-none">{property.street}</td>
+            <td class="px-4 py-3 border-none">{property.number}</td>
             <td class="px-4 py-3 border-none">
               <span class={["status", property.status]}>
-                <%= property.status_es %>
+                {property.status_es}
               </span>
             </td>
-            <td class="px-4 py-3 border-none"><%= property.paid_months %></td>
-            <td class="px-4 py-3 border-none"><%= property.payment_status %></td>
+            <td class="px-4 py-3 border-none">{property.paid_months}</td>
+            <td class="px-4 py-3 border-none">{property.payment_status}</td>
             <td class="px-4 py-3 border-none text-center">
-              <button phx-click="toggle_status" phx-value-id={property.id} class="px-3 py-1 text-white rounded bg-blue-500 hover:bg-blue-700">
+              <button
+                phx-click="toggle_status"
+                phx-value-id={property.id}
+                class="px-3 py-1 text-white rounded bg-blue-500 hover:bg-blue-700"
+              >
                 <%= if property.active_status == :active do %>
                   Desactivar
                 <% else %>
@@ -123,7 +137,8 @@
       phx-click="change_page"
       phx-value-page="1"
       class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={@current_page == 1 && "disabled"}>
+      disabled={@current_page == 1 && "disabled"}
+    >
       &laquo;
     </button>
 
@@ -131,17 +146,19 @@
       phx-click="change_page"
       phx-value-page={@current_page - 1}
       class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={@current_page == 1 && "disabled"}>
+      disabled={@current_page == 1 && "disabled"}
+    >
       &lsaquo;
     </button>
 
-    <span class="px-4 py-2 font-semibold">Página <%= @current_page %> de <%= @total_pages %></span>
+    <span class="px-4 py-2 font-semibold">Página {@current_page} de {@total_pages}</span>
 
     <button
       phx-click="change_page"
       phx-value-page={@current_page + 1}
       class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={@current_page == @total_pages && "disabled"}>
+      disabled={@current_page == @total_pages && "disabled"}
+    >
       &rsaquo;
     </button>
 
@@ -149,7 +166,8 @@
       phx-click="change_page"
       phx-value-page={@total_pages}
       class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={@current_page == @total_pages && "disabled"}>
+      disabled={@current_page == @total_pages && "disabled"}
+    >
       &raquo;
     </button>
   </div>

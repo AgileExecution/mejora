@@ -17,7 +17,7 @@ defmodule MejoraWeb.Live.AdminProperties do
         per_page = 10
 
         all_properties =
-          Properties.get_properties(filter, [asc: :street, asc: :number])
+          Properties.get_properties(filter, asc: :street, asc: :number)
           |> Enum.map(&add_status_to_property(&1, neighborhood.id))
 
         property_count = length(all_properties)
@@ -79,8 +79,8 @@ defmodule MejoraWeb.Live.AdminProperties do
       socket.assigns.all_properties
       |> Enum.filter(fn property ->
         (String.contains?(String.downcase(property.street || ""), String.downcase(search_query)) or
-        String.contains?(String.downcase(property.number || ""), String.downcase(search_query))) and
-        (selected_status == "" or property.status_es == selected_status)
+           String.contains?(String.downcase(property.number || ""), String.downcase(search_query))) and
+          (selected_status == "" or property.status_es == selected_status)
       end)
 
     total_count = length(filtered_properties)
@@ -89,11 +89,11 @@ defmodule MejoraWeb.Live.AdminProperties do
     paginated_properties = paginate_properties(filtered_properties, 1, per_page)
 
     {:noreply,
-    socket
-    |> assign(:per_page, per_page)
-    |> assign(:total_pages, total_pages)
-    |> assign(:properties, paginated_properties)
-    |> assign(:current_page, 1)}
+     socket
+     |> assign(:per_page, per_page)
+     |> assign(:total_pages, total_pages)
+     |> assign(:properties, paginated_properties)
+     |> assign(:current_page, 1)}
   end
 
   @impl true
@@ -121,57 +121,69 @@ defmodule MejoraWeb.Live.AdminProperties do
   end
 
   @impl true
-def handle_event("filter_properties", %{"value" => query}, socket) do
-  normalized_query = String.trim(query)
-  selected_status = socket.assigns.selected_status
-  per_page = socket.assigns.per_page
+  def handle_event("filter_properties", %{"value" => query}, socket) do
+    normalized_query = String.trim(query)
+    selected_status = socket.assigns.selected_status
+    per_page = socket.assigns.per_page
 
-  filtered_properties =
-    socket.assigns.all_properties
-    |> Enum.filter(fn property ->
-      (String.contains?(String.downcase(property.street || ""), String.downcase(normalized_query)) or
-       String.contains?(String.downcase(property.number || ""), String.downcase(normalized_query))) and
-      (selected_status == "" or property.status_es == selected_status)
-    end)
+    filtered_properties =
+      socket.assigns.all_properties
+      |> Enum.filter(fn property ->
+        (String.contains?(
+           String.downcase(property.street || ""),
+           String.downcase(normalized_query)
+         ) or
+           String.contains?(
+             String.downcase(property.number || ""),
+             String.downcase(normalized_query)
+           )) and
+          (selected_status == "" or property.status_es == selected_status)
+      end)
 
-  total_count = length(filtered_properties)
-  total_pages = max(Float.ceil(total_count / per_page) |> trunc(), 1)
+    total_count = length(filtered_properties)
+    total_pages = max(Float.ceil(total_count / per_page) |> trunc(), 1)
 
-  paginated_properties = paginate_properties(filtered_properties, 1, per_page)
+    paginated_properties = paginate_properties(filtered_properties, 1, per_page)
 
-  {:noreply,
-   socket
-   |> assign(:properties, paginated_properties)
-   |> assign(:search_query, normalized_query)
-   |> assign(:total_pages, total_pages)
-   |> assign(:current_page, 1)}
-end
+    {:noreply,
+     socket
+     |> assign(:properties, paginated_properties)
+     |> assign(:search_query, normalized_query)
+     |> assign(:total_pages, total_pages)
+     |> assign(:current_page, 1)}
+  end
 
-@impl true
-def handle_event("filter_status", %{"status" => status}, socket) do
-  normalized_query = socket.assigns.search_query
-  per_page = socket.assigns.per_page
+  @impl true
+  def handle_event("filter_status", %{"status" => status}, socket) do
+    normalized_query = socket.assigns.search_query
+    per_page = socket.assigns.per_page
 
-  filtered_properties =
-    socket.assigns.all_properties
-    |> Enum.filter(fn property ->
-      (String.contains?(String.downcase(property.street || ""), String.downcase(normalized_query)) or
-       String.contains?(String.downcase(property.number || ""), String.downcase(normalized_query))) and
-      (status == "" or property.status_es == status)
-    end)
+    filtered_properties =
+      socket.assigns.all_properties
+      |> Enum.filter(fn property ->
+        (String.contains?(
+           String.downcase(property.street || ""),
+           String.downcase(normalized_query)
+         ) or
+           String.contains?(
+             String.downcase(property.number || ""),
+             String.downcase(normalized_query)
+           )) and
+          (status == "" or property.status_es == status)
+      end)
 
-  total_count = length(filtered_properties)
-  total_pages = max(Float.ceil(total_count / per_page) |> trunc(), 1)
+    total_count = length(filtered_properties)
+    total_pages = max(Float.ceil(total_count / per_page) |> trunc(), 1)
 
-  paginated_properties = paginate_properties(filtered_properties, 1, per_page)
+    paginated_properties = paginate_properties(filtered_properties, 1, per_page)
 
-  {:noreply,
-   socket
-   |> assign(:properties, paginated_properties)
-   |> assign(:selected_status, status)
-   |> assign(:total_pages, total_pages)
-   |> assign(:current_page, 1)}
-end
+    {:noreply,
+     socket
+     |> assign(:properties, paginated_properties)
+     |> assign(:selected_status, status)
+     |> assign(:total_pages, total_pages)
+     |> assign(:current_page, 1)}
+  end
 
   @impl true
   def handle_event("change_page", %{"page" => page}, socket) do
@@ -185,8 +197,8 @@ end
       socket.assigns.all_properties
       |> Enum.filter(fn property ->
         (String.contains?(String.downcase(property.street || ""), String.downcase(search_query)) or
-        String.contains?(String.downcase(property.number || ""), String.downcase(search_query))) and
-        (selected_status == "" or property.status_es == selected_status)
+           String.contains?(String.downcase(property.number || ""), String.downcase(search_query))) and
+          (selected_status == "" or property.status_es == selected_status)
       end)
 
     total_pages = max(Float.ceil(length(filtered_properties) / per_page) |> trunc(), 1)
@@ -196,10 +208,10 @@ end
     paginated_properties = paginate_properties(filtered_properties, page, per_page)
 
     {:noreply,
-    socket
-    |> assign(:properties, paginated_properties)
-    |> assign(:total_pages, total_pages)
-    |> assign(:current_page, page)}
+     socket
+     |> assign(:properties, paginated_properties)
+     |> assign(:total_pages, total_pages)
+     |> assign(:current_page, page)}
   end
 
   @impl true
@@ -244,7 +256,7 @@ end
               _ -> Decimal.new(0)
             end
 
-            paid_months_compare =
+          paid_months_compare =
             if Decimal.gt?(monthly_quota, Decimal.new(0)) do
               Decimal.div(transactions_total, monthly_quota)
               |> Decimal.round(0, :down)

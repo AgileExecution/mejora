@@ -41,35 +41,35 @@ neighborhood =
   |> Neighborhood.embedded_changeset()
   |> Repo.insert!()
 
-  [
-    {
-      [
-        "Genesis",
-        {2019, 2, 7},
-        {2024, 8, 11},
-        "Primera Mesa Directiva",
-        "Inactiva",
-        neighborhood.id
-      ],
-      0
-    },
-    {
-      [
-        "Movimiento Naranja",
-        {2024, 8, 12},
-        to_string(today),
-        "Segunda Mesa Directiva",
-        "Activa",
-        neighborhood.id
-      ],
-      1
-    }
-  ]
-  |> Enum.each(fn record ->
-    record
-    |> Board.embedded_changeset()
-    |> Repo.insert!()
-  end)
+[
+  {
+    [
+      "Genesis",
+      {2019, 2, 7},
+      {2024, 8, 11},
+      "Primera Mesa Directiva",
+      "Inactiva",
+      neighborhood.id
+    ],
+    0
+  },
+  {
+    [
+      "Movimiento Naranja",
+      {2024, 8, 12},
+      to_string(today),
+      "Segunda Mesa Directiva",
+      "Activa",
+      neighborhood.id
+    ],
+    1
+  }
+]
+|> Enum.each(fn record ->
+  record
+  |> Board.embedded_changeset()
+  |> Repo.insert!()
+end)
 
 [
   {

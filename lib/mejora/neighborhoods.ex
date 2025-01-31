@@ -50,10 +50,10 @@ defmodule Mejora.Neighborhoods do
   end
 
   def current_quota(neighborhood_id) do
-      Quota
-      |> from()
-      |> where(neighborhood_id: ^neighborhood_id, status: :active)
-      |> Repo.one()
+    Quota
+    |> from()
+    |> where(neighborhood_id: ^neighborhood_id, status: :active)
+    |> Repo.one()
   end
 
   def get_properties(neighborhood_id) do

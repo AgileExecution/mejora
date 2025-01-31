@@ -92,7 +92,7 @@
         </tr>
       </thead>
       <tbody>
-        <%= for {property, index} <- Enum.with_index(@properties) do %>
+        <%= for {property, _index} <- Enum.with_index(@properties) do %>
           <tr class="odd:bg-gray-100 even:bg-white w-full">
             <td class="px-4 py-3 border-none"><%= property.street %></td>
             <td class="px-4 py-3 border-none"><%= property.number %></td>

@@ -154,10 +154,10 @@
         <article id="payment-history-cell" class="font-semibold">
           <span class="flex flex-row justify-between w-full">
             <p>
-              <%= Date.to_string(card.payment_date) %>
+              <%= Date.to_string(card.due_date) %>
             </p>
             <p class="green-color">
-              <%= Number.Currency.number_to_currency(card.total_amount) %>
+              <%= Number.Currency.number_to_currency(card.total) %>
             </p>
           </span>
 

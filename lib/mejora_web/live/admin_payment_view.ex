@@ -24,9 +24,9 @@ defmodule MejoraWeb.Live.AdminPaymentView do
   def convert_payment_notice_to_payed_months(payment_notice) do
     # Use a stream
     payment_notice
-      |> Enum.filter(fn pay -> pay.status == :paid  end)
-      |> Enum.map( fn prop -> prop.due_date end)
-      |> Enum.map( fn date -> convert_date_to_month(date) end)
+      |> Enum.filter( fn pay -> pay.status == :paid  end )
+      |> Enum.map( fn prop -> prop.due_date end )
+      |> Enum.map( fn date -> convert_date_to_month(date) end )
   end
 
   def convert_date_to_month(due_date) do

@@ -1,23 +1,26 @@
 defmodule MejoraWeb.Live.AccountStatement do
   use MejoraWeb, :live_view
+  import Ecto.Query
   alias Mejora.Repo
   alias Mejora.Neighborhoods.Quota
-  alias Mejora.Transactions.Transaction
+  alias Mejora.Transactions.PaymentNotice
 
   def mount(_params, _session, %{assigns: %{current_user: current_user}} = socket) do
     neighborhood_id = 1
-    quota = Repo.get_by(Quota, [neighborhood_id: neighborhood_id, status: "active"])
+    transactions = get_payment_notice_from_user(current_user)
 
-    transactions = Repo.all(Transaction)
-    IO.inspect(current_user)
+    anual_budget = Quota
+                      |> Repo.get_by([neighborhood_id: neighborhood_id, status: "active"])
+                      |> Map.get(:amount)
+                      |> Decimal.mult(Decimal.new("12"))
+                      |> Decimal.to_integer()
 
-    # ----------------------------------------------
-    # ----------------------------------------------
-    actual_budget = Decimal.new("420")
-    anual_budget = quota.amount |> Decimal.mult(Decimal.new("12"))
+    actual_budget = transactions
+                          |> Enum.map(fn(x) -> Decimal.to_integer(x.total) end)
+                          |> Enum.sum()
 
-    debt = Decimal.sub(anual_budget, actual_budget) |> Decimal.abs
-    percentage = actual_budget |> Decimal.mult(Decimal.new("100")) |> Decimal.div_int(anual_budget) |> Decimal.to_float()
+    percentage = (actual_budget * 100) / anual_budget |> Kernel.round()
+
     # ----------------------------------------------
     # ----------------------------------------------
 
@@ -44,7 +47,7 @@ defmodule MejoraWeb.Live.AccountStatement do
       money: %{
         anual_budget: anual_budget,
         actual_budget: actual_budget,
-        debt: debt,
+        debt: anual_budget - actual_budget,
         percentage: percentage
       },
       svg: %{
@@ -58,4 +61,15 @@ defmodule MejoraWeb.Live.AccountStatement do
     {:ok, assign(socket, :content, content)}
   end
 
+  def get_payment_notice_from_user(current_user) do
+    property_ids = current_user
+                        |> Repo.preload(:properties)
+                        |> Map.get(:properties)
+                        |> Enum.map(&Map.get(&1, :id))
+
+    Repo.all(
+      from payments in PaymentNotice,
+      where: payments.property_id in ^property_ids and payments.status == ^:paid
+    )
+  end
 end

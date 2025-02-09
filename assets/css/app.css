@@ -68,6 +68,11 @@
 
 body { @apply bg-background text-foreground; }
 
+.montserrat-font {
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 
 #payment-history-cell {
   font-family: sans-serif;
@@ -103,9 +108,10 @@ body { @apply bg-background text-foreground; }
   border-radius: 0.75rem;
 }
 
-.summary-cards {
+.summary-cards-container {
   margin: auto;
   margin-top: 20px;
+  margin-bottom: 20px;
   width: 95%;
   display: flex;
   justify-content: space-between;
@@ -161,7 +167,7 @@ table td {
 
 .status {
   padding: 5px 10px;
-  border-radius: 4px;
+  border-radius: 20px;
   color: #ffffff;
 }
 
@@ -179,4 +185,57 @@ table td {
 
 .status.unknown {
   background-color: gray;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  margin: 0 10px;
+}
+
+.header_II {
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: rgb(50,87,160);
+  font-size: 19px;
+  margin: 25px 0px 32px;
+}
+
+.main-table {
+  font-weight: 600;
+}
+
+.main-table tr:nth-child(even) td {
+  background-color: #f7f6fe !important;
+}
+
+.green-type:checked {
+  background-color: #38cb38;
+  box-shadow: none
+}
+
+.green-type:checked:hover, .green-type:checked:focus {
+  background-color: #04ae04;
+  --tw-ring-color: #04ae04;
+  box-shadow: none !important;
 }

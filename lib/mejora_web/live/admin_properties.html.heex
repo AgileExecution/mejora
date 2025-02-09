@@ -3,15 +3,15 @@
   <div class="summary-cards">
     <div class="card1">
       <p class="title-card">Cuota Mensual por Casa</p>
-      <h2 class="number-card">$<%= @monthly_quota.amount %></h2>
+      <h2 class="number-card">${@monthly_quota.amount}</h2>
     </div>
     <div class="card2">
       <p class="title-card">Número Propiedades</p>
-      <h2 class="number-card"><%= @property_count %></h2>
+      <h2 class="number-card">{@property_count}</h2>
     </div>
     <div class="card3">
       <p class="title-card">Presupuesto de Mantenimiento Mensual</p>
-      <h2 class="number-card">$<%= @neighborhood_quota %></h2>
+      <h2 class="number-card">${@neighborhood_quota}</h2>
     </div>
   </div>
 
@@ -23,14 +23,16 @@
       phx-debounce="300"
       phx-keyup="filter_properties"
       value={@search_query}
-      name ="query"
+      name="query"
     />
-  
-    <!-- Dropdown de estado -->
+    
+<!-- Dropdown de estado -->
     <form phx-submit="filter_status">
       <select name="status">
         <option value="" selected={@selected_status == ""}>Todos</option>
-        <option value="Al corriente" selected={@selected_status == "Al corriente"}>Al corriente</option>
+        <option value="Al corriente" selected={@selected_status == "Al corriente"}>
+          Al corriente
+        </option>
         <option value="Atrasado" selected={@selected_status == "Atrasado"}>Atrasado</option>
         <option value="Adelantado" selected={@selected_status == "Adelantado"}>Adelantado</option>
       </select>
@@ -53,15 +55,15 @@
       <tbody>
         <%= for property <- @properties do %>
           <tr>
-            <td><%= property.street %></td>
-            <td><%= property.number %></td>
+            <td>{property.street}</td>
+            <td>{property.number}</td>
             <td>
               <span class={["status", property.status]}>
-                <%= property.status_es %>
+                {property.status_es}
               </span>
             </td>
-            <td><%= property.paid_months %></td>
-            <td><%= property.payment_status %></td>
+            <td>{property.paid_months}</td>
+            <td>{property.payment_status}</td>
             <td>
               <button phx-click="toggle_status" phx-value-id={property.id}>
                 <%= if property.active_status == :active do %>

@@ -9,7 +9,7 @@ defmodule MejoraWeb.Live.AdminProperties do
 
   @impl true
   def mount(_params, _session, %{assigns: %{current_user: current_user}} = socket) do
-    case User.get_neighborhood_from_board_membership(current_user) do
+    case User.get_neighborhood_from_property_membership(current_user) do
       {:ok, neighborhood} ->
         monthly_quota = Neighborhoods.current_quota(neighborhood.id)
         neighborhood_quota = Neighborhoods.expected_monthly_quota(neighborhood.id)
@@ -17,7 +17,7 @@ defmodule MejoraWeb.Live.AdminProperties do
         filter = [{:neighborhood_id, neighborhood.id}]
 
         properties =
-        Properties.get_properties(filter, [asc: :street, asc: :number])
+          Properties.get_properties(filter, asc: :street, asc: :number)
           |> Enum.map(&add_status_to_property(&1, neighborhood.id))
 
         property_count = length(properties)
@@ -93,8 +93,14 @@ defmodule MejoraWeb.Live.AdminProperties do
     filtered_properties =
       socket.assigns.all_properties
       |> Enum.filter(fn property ->
-        String.contains?(String.downcase(property.street || ""), String.downcase(normalized_query)) or
-          String.contains?(String.downcase(property.number || ""), String.downcase(normalized_query))
+        String.contains?(
+          String.downcase(property.street || ""),
+          String.downcase(normalized_query)
+        ) or
+          String.contains?(
+            String.downcase(property.number || ""),
+            String.downcase(normalized_query)
+          )
       end)
 
     filtered_properties =
@@ -105,9 +111,9 @@ defmodule MejoraWeb.Live.AdminProperties do
       end
 
     {:noreply,
-    socket
-    |> assign(:properties, filtered_properties)
-    |> assign(:search_query, normalized_query)}
+     socket
+     |> assign(:properties, filtered_properties)
+     |> assign(:search_query, normalized_query)}
   end
 
   @impl true
@@ -117,8 +123,14 @@ defmodule MejoraWeb.Live.AdminProperties do
     filtered_properties =
       socket.assigns.all_properties
       |> Enum.filter(fn property ->
-        String.contains?(String.downcase(property.street || ""), String.downcase(normalized_query)) or
-          String.contains?(String.downcase(property.number || ""), String.downcase(normalized_query))
+        String.contains?(
+          String.downcase(property.street || ""),
+          String.downcase(normalized_query)
+        ) or
+          String.contains?(
+            String.downcase(property.number || ""),
+            String.downcase(normalized_query)
+          )
       end)
 
     filtered_properties =
@@ -129,9 +141,9 @@ defmodule MejoraWeb.Live.AdminProperties do
       end
 
     {:noreply,
-    socket
-    |> assign(:properties, filtered_properties)
-    |> assign(:selected_status, status)}
+     socket
+     |> assign(:properties, filtered_properties)
+     |> assign(:selected_status, status)}
   end
 
   @impl true
@@ -154,73 +166,73 @@ defmodule MejoraWeb.Live.AdminProperties do
       case Status.get_property_status(property.id) do
         {:ok, status} ->
           status_class =
-          case status do
-            :current -> "current"
-            :late -> "late"
-            :advance -> "advance"
-          end
+            case status do
+              :current -> "current"
+              :late -> "late"
+              :advance -> "advance"
+            end
 
           status_es =
-          case status do
-            :current -> "Al corriente"
-            :late -> "Atrasado"
-            :advance -> "Adelantado"
-          end
+            case status do
+              :current -> "Al corriente"
+              :late -> "Atrasado"
+              :advance -> "Adelantado"
+            end
 
           transactions_total = Status.get_transactions_total(property.id)
           expected_amount = Status.get_expected_amount(property.id)
 
           monthly_quota =
-          case Neighborhoods.current_quota(neighborhood_id) do
-            %Quota{amount: amount} -> amount
-            _ -> Decimal.new(0)
-          end
+            case Neighborhoods.current_quota(neighborhood_id) do
+              %Quota{amount: amount} -> amount
+              _ -> Decimal.new(0)
+            end
 
-      paid_months_compare =
-        cond do
-          Decimal.compare(transactions_total, expected_amount) != :lt ->
-            Decimal.div(transactions_total, monthly_quota)
-            |> Decimal.round(0, :down)
-            |> Decimal.to_integer()
-            |> Kernel.-(1)
+          paid_months_compare =
+            cond do
+              Decimal.compare(transactions_total, expected_amount) != :lt ->
+                Decimal.div(transactions_total, monthly_quota)
+                |> Decimal.round(0, :down)
+                |> Decimal.to_integer()
+                |> Kernel.-(1)
 
-          Decimal.compare(transactions_total, expected_amount) == :lt ->
-            Decimal.div(transactions_total, monthly_quota)
-            |> Decimal.round(0, :down)
-            |> Decimal.to_integer()
-            |> Kernel.-(1)
-        end
+              Decimal.compare(transactions_total, expected_amount) == :lt ->
+                Decimal.div(transactions_total, monthly_quota)
+                |> Decimal.round(0, :down)
+                |> Decimal.to_integer()
+                |> Kernel.-(1)
+            end
 
-      paid_months =
-      if paid_months_compare > 0 do
-        "+#{paid_months_compare}"
-      else
-        "#{paid_months_compare}"
-      end
+          paid_months =
+            if paid_months_compare > 0 do
+              "+#{paid_months_compare}"
+            else
+              "#{paid_months_compare}"
+            end
 
-      payment_status = "$#{Decimal.to_string(transactions_total)}"
+          payment_status = "$#{Decimal.to_string(transactions_total)}"
 
-      active_status = property.status
-      toggle_action = if active_status == :active, do: "Desactivar", else: "Activar"
+          active_status = property.status
+          toggle_action = if active_status == :active, do: "Desactivar", else: "Activar"
 
-      property
-      |> Map.put(:status, status)
-      |> Map.put(:status_class, status_class)
-      |> Map.put(:status_es, status_es)
-      |> Map.put(:payment_status, payment_status)
-      |> Map.put(:active_status, active_status)
-      |> Map.put(:toggle_action, toggle_action)
-      |> Map.put(:paid_months, paid_months)
+          property
+          |> Map.put(:status, status)
+          |> Map.put(:status_class, status_class)
+          |> Map.put(:status_es, status_es)
+          |> Map.put(:payment_status, payment_status)
+          |> Map.put(:active_status, active_status)
+          |> Map.put(:toggle_action, toggle_action)
+          |> Map.put(:paid_months, paid_months)
 
-      {:error, _reason} ->
-        property
-        |> Map.put(:status, "unknown")
-        |> Map.put(:status_class, "unknown")
-        |> Map.put(:status_es, "Estado desconocido")
-        |> Map.put(:payment_status, "Saldo desconocido")
-        |> Map.put(:active_status, "unknown")
-        |> Map.put(:toggle_action, "Activar")
-        |> Map.put(:paid_months, 0)
+        {:error, _reason} ->
+          property
+          |> Map.put(:status, "unknown")
+          |> Map.put(:status_class, "unknown")
+          |> Map.put(:status_es, "Estado desconocido")
+          |> Map.put(:payment_status, "Saldo desconocido")
+          |> Map.put(:active_status, "unknown")
+          |> Map.put(:toggle_action, "Activar")
+          |> Map.put(:paid_months, 0)
       end
     end
   end

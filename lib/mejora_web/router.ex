@@ -30,6 +30,7 @@ defmodule MejoraWeb.Router do
       live "/projects", Live.Projects
       live "/billing", Live.Billing
       live "/properties", Live.AdminProperties
+      # live "/payments", Live.AdminPaymentView
     end
   end
 
@@ -91,12 +92,13 @@ defmodule MejoraWeb.Router do
     pipe_through [:browser]
 
     delete "/users/log_out", UserSessionController, :delete
-    get "/user_account_state", PageController, :show
 
     live_session :current_user,
       on_mount: [{MejoraWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
+      live "/users/account_statement", Live.AccountStatement
+      live "/admin/payments", Live.AdminPaymentView
     end
   end
 end

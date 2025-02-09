@@ -68,6 +68,11 @@
 
 body { @apply bg-background text-foreground; }
 
+.montserrat-font {
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 
 #payment-history-cell {
   font-family: sans-serif;
@@ -206,4 +211,31 @@ table td {
 
 .pagination span {
   margin: 0 10px;
+}
+
+.header_II {
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: rgb(50,87,160);
+  font-size: 19px;
+  margin: 25px 0px 32px;
+}
+
+.main-table {
+  font-weight: 600;
+}
+
+.main-table tr:nth-child(even) td {
+  background-color: #f7f6fe !important;
+}
+
+.green-type:checked {
+  background-color: #38cb38;
+  box-shadow: none
+}
+
+.green-type:checked:hover, .green-type:checked:focus {
+  background-color: #04ae04;
+  --tw-ring-color: #04ae04;
+  box-shadow: none !important;
 }

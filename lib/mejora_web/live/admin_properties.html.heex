@@ -1,34 +1,84 @@
-<div>
-  <h1>HISTORIAL POR PROPIEDAD - 2024</h1>
-  <div class="summary-cards">
-    <div class="card1">
-      <p class="title-card">Cuota Mensual por Casa</p>
-      <h2 class="number-card">${@monthly_quota.amount}</h2>
+<div style="width:80vw; margin-left:10vw; margin-bottom: 5em">
+  <h2
+    class="w-full text-center uppercase "
+    style="font-weight:700; letter-spacing:4px; font-size:30px; margin:25px 0px 32px"
+  >
+    HISTORIAL POR PROPIEDAD - 2024
+  </h2>
+
+  <div class="summary-cards-container">
+    <div class="card1 flex items-center justify-between p-4 rounded-lg shadow-md w-64">
+      <div>
+        <p class="title-card">Cuota Mensual por Casa</p>
+        <h2 class="number-card">${@monthly_quota.amount}</h2>
+      </div>
+      <Heroicons.Outline.currency_dollar class="w-14 h-14" />
     </div>
-    <div class="card2">
-      <p class="title-card">Número Propiedades</p>
-      <h2 class="number-card">{@property_count}</h2>
+    <div class="card2 flex items-center justify-between p-4 rounded-lg shadow-md w-64">
+      <div>
+        <p class="title-card">Número Propiedades</p>
+        <h2 class="number-card">{@property_count}</h2>
+      </div>
+      <Heroicons.Outline.home class="w-14 h-14" />
     </div>
-    <div class="card3">
-      <p class="title-card">Presupuesto de Mantenimiento Mensual</p>
-      <h2 class="number-card">${@neighborhood_quota}</h2>
+    <div class="card3 flex items-center justify-between p-4 rounded-lg shadow-md w-64">
+      <div>
+        <p class="title-card">Presupuesto de Mantenimiento Mensual</p>
+        <h2 class="number-card">${@neighborhood_quota}</h2>
+      </div>
+      <Heroicons.Outline.user_group class="w-14 h-14" />
     </div>
   </div>
 
-  <div>
-    <!-- Buscador de texto -->
-    <input
-      type="text"
-      placeholder="Buscar por calle o número"
-      phx-debounce="300"
-      phx-keyup="filter_properties"
-      value={@search_query}
-      name="query"
-    />
-    
-<!-- Dropdown de estado -->
-    <form phx-submit="filter_status">
-      <select name="status">
+  <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4">
+    <form phx-change="per_page_change" class="w-full sm:w-auto">
+      <label
+        for="per_page"
+        class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left"
+      >
+        Mostrar:
+      </label>
+      <select
+        name="per_page"
+        class="w-full sm:w-32 h-12 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="10" selected={@per_page == 10}>10</option>
+        <option value="50" selected={@per_page == 50}>50</option>
+        <option value="75" selected={@per_page == 75}>75</option>
+      </select>
+    </form>
+
+    <div class="w-full sm:w-auto">
+      <label
+        for="search_query"
+        class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left"
+      >
+        Búsqueda de propiedades
+      </label>
+      <input
+        id="search_query"
+        class="w-full sm:w-64 lg:w-80 h-12 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="text"
+        placeholder="Buscar por calle o número"
+        phx-debounce="300"
+        phx-keyup="filter_properties"
+        value={@search_query}
+        name="query"
+      />
+    </div>
+
+    <form phx-change="filter_status" class="w-full sm:w-auto">
+      <label
+        for="status"
+        class="block text-gray-700 text-sm font-semibold mb-1 text-center sm:text-left"
+      >
+        Estatus
+      </label>
+      <select
+        id="status"
+        name="status"
+        class="w-full sm:w-40 h-12 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
         <option value="" selected={@selected_status == ""}>Todos</option>
         <option value="Al corriente" selected={@selected_status == "Al corriente"}>
           Al corriente
@@ -36,36 +86,39 @@
         <option value="Atrasado" selected={@selected_status == "Atrasado"}>Atrasado</option>
         <option value="Adelantado" selected={@selected_status == "Adelantado"}>Adelantado</option>
       </select>
-      <button type="submit">Filtrar</button>
     </form>
   </div>
 
   <div class="table-container">
-    <table>
+    <table class="w-full table-fixed border-separate border-spacing-0">
       <thead>
-        <tr>
-          <th>Calle</th>
-          <th>Número</th>
-          <th>Estatus</th>
-          <th>Mes</th>
-          <th>Monto Actual</th>
-          <th>Activar/Desactivar vivienda</th>
+        <tr class="bg-white">
+          <th class="px-4 py-3 text-left border-none">Calle</th>
+          <th class="px-4 py-3 text-left border-none">Número</th>
+          <th class="px-4 py-3 text-left border-none">Estatus</th>
+          <th class="px-4 py-3 text-left border-none">Mes</th>
+          <th class="px-4 py-3 text-left border-none">Monto Actual</th>
+          <th class="px-4 py-3 text-center border-none">Acción</th>
         </tr>
       </thead>
       <tbody>
-        <%= for property <- @properties do %>
-          <tr>
-            <td>{property.street}</td>
-            <td>{property.number}</td>
-            <td>
+        <%= for {property, _index} <- Enum.with_index(@properties) do %>
+          <tr class="odd:bg-gray-100 even:bg-white w-full">
+            <td class="px-4 py-3 border-none">{property.street}</td>
+            <td class="px-4 py-3 border-none">{property.number}</td>
+            <td class="px-4 py-3 border-none">
               <span class={["status", property.status]}>
                 {property.status_es}
               </span>
             </td>
-            <td>{property.paid_months}</td>
-            <td>{property.payment_status}</td>
-            <td>
-              <button phx-click="toggle_status" phx-value-id={property.id}>
+            <td class="px-4 py-3 border-none">{property.paid_months}</td>
+            <td class="px-4 py-3 border-none">{property.payment_status}</td>
+            <td class="px-4 py-3 border-none text-center">
+              <button
+                phx-click="toggle_status"
+                phx-value-id={property.id}
+                class="px-3 py-1 text-white rounded bg-blue-500 hover:bg-blue-700"
+              >
                 <%= if property.active_status == :active do %>
                   Desactivar
                 <% else %>
@@ -77,5 +130,45 @@
         <% end %>
       </tbody>
     </table>
+  </div>
+
+  <div class="flex justify-center items-center gap-2 mt-4">
+    <button
+      phx-click="change_page"
+      phx-value-page="1"
+      class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={@current_page == 1 && "disabled"}
+    >
+      &laquo;
+    </button>
+
+    <button
+      phx-click="change_page"
+      phx-value-page={@current_page - 1}
+      class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={@current_page == 1 && "disabled"}
+    >
+      &lsaquo;
+    </button>
+
+    <span class="px-4 py-2 font-semibold">Página {@current_page} de {@total_pages}</span>
+
+    <button
+      phx-click="change_page"
+      phx-value-page={@current_page + 1}
+      class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={@current_page == @total_pages && "disabled"}
+    >
+      &rsaquo;
+    </button>
+
+    <button
+      phx-click="change_page"
+      phx-value-page={@total_pages}
+      class="px-3 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={@current_page == @total_pages && "disabled"}
+    >
+      &raquo;
+    </button>
   </div>
 </div>

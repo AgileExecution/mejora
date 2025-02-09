@@ -9,6 +9,7 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
 alias Mejora.Repo
 alias Mejora.Boards.Board
 alias Mejora.Neighborhoods.{Neighborhood, Quota}
@@ -18,44 +19,48 @@ alias Mejora.Providers.Provider
 alias Mejora.Transactions.PaymentNotice
 alias Mejora.Transactions.PurchaseNotice
 
+today = Date.utc_today() |> Date.to_string()
+
+neighborhood =
+  {
+    [
+      "Residencial 15 de Mayo II",
+      "Fraccionamiento",
+      "México",
+      "Nuevo León",
+      "Guadalupe",
+      "67170",
+      "15demayoii@gmail.com",
+      nil,
+      "Itzel Soledad Castillo Almanza",
+      "2024-11-22",
+      nil
+    ],
+    0
+  }
+  |> Neighborhood.embedded_changeset()
+  |> Repo.insert!()
+
 [
   {
     [
       "Genesis",
-      "2019-02-07",
-      "2024-08-11",
+      {2019, 2, 7},
+      {2024, 8, 11},
       "Primera Mesa Directiva",
-      "Jaime",
-      "Pinal",
-      "Maldonado",
-      "Ana Laura",
-      "Calderón",
-      "Cardoza",
-      "Felipe Arturo",
-      "Jiménez",
-      "López",
       "Inactiva",
-      nil
+      neighborhood.id
     ],
     0
   },
   {
     [
       "Movimiento Naranja",
-      "2024-08-12",
-      "Presente",
+      {2024, 8, 12},
+      to_string(today),
       "Segunda Mesa Directiva",
-      "Lucia Berenice",
-      "López",
-      "Saenz",
-      "Ana Laura",
-      "Calderón",
-      "Cardoza",
-      "Jorge Saúl",
-      "Canales",
-      "Treviño",
-      "Treviño",
-      nil
+      "Activa",
+      neighborhood.id
     ],
     1
   }
@@ -65,31 +70,6 @@ alias Mejora.Transactions.PurchaseNotice
   |> Board.embedded_changeset()
   |> Repo.insert!()
 end)
-
-[neighborhood] =
-  [
-    {
-      [
-        "Residencial 15 de Mayo II",
-        "Fraccionamiento",
-        "México",
-        "Nuevo León",
-        "Guadalupe",
-        "67170",
-        "15demayoii@gmail.com",
-        nil,
-        "Itzel Soledad Castillo Almanza",
-        "2024-11-22",
-        nil
-      ],
-      0
-    }
-  ]
-  |> Enum.map(fn record ->
-    record
-    |> Neighborhood.embedded_changeset()
-    |> Repo.insert!()
-  end)
 
 [
   {
@@ -115,13 +95,13 @@ end)
     1
   }
 ]
-|> Enum.map(fn record ->
+|> Enum.each(fn record ->
   record
   |> Quota.embedded_changeset()
   |> Repo.insert!()
 end)
 
-[property_one, property_two] =
+[_property_one, _property_two] =
   [
     {
       [

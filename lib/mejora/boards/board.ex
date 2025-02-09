@@ -17,6 +17,8 @@ defmodule Mejora.Boards.Board do
     field :neighborhood_id, :integer
     field :index, :integer, virtual: true
 
+    belongs_to :neighborhood, Mejora.Neighborhoods.Neighborhood
+
     timestamps()
   end
 
@@ -45,8 +47,9 @@ defmodule Mejora.Boards.Board do
       name: Enum.at(record, 0),
       start_date: parse_date(Enum.at(record, 1)),
       end_date: parse_date(Enum.at(record, 2)),
-      status: parse_status(Enum.at(record, 13)),
-      comments: Enum.at(record, 3)
+      comments: Enum.at(record, 3),
+      status: parse_status(Enum.at(record, 4)),
+      neighborhood_id: Enum.at(record, 5)
     }
   end
 end

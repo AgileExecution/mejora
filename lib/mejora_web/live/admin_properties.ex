@@ -209,7 +209,7 @@ defmodule MejoraWeb.Live.AdminProperties do
 
     {:noreply,
      socket
-     |> assign(:selected_status, status)}
+     |> assign(:selected_status, selected_status)
      |> assign(:properties, paginated_properties)
      |> assign(:total_pages, total_pages)
      |> assign(:current_page, page)}

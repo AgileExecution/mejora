@@ -14,7 +14,6 @@ defmodule Mejora.Boards.Board do
     field :end_date, :date
     field :status, Ecto.Enum, values: [:active, :inactive], default: :active
     field :comments, :string
-    field :neighborhood_id, :integer
     field :index, :integer, virtual: true
 
     belongs_to :neighborhood, Mejora.Neighborhoods.Neighborhood

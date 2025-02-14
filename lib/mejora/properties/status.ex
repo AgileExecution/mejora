@@ -71,11 +71,13 @@ defmodule Mejora.Properties.Status do
 
         transaction_sum =
           Transaction
-          |> join(:inner, [t], payment_notice in PaymentNotice, on: t.association_type == "PaymentNotice" and t.association_id == payment_notice.id)
+          |> join(:inner, [t], payment_notice in PaymentNotice,
+            on: t.association_type == "PaymentNotice" and t.association_id == payment_notice.id
+          )
           |> join(:inner, [t, pn], tr in assoc(t, :transaction_rows))
           |> where(
             [t, pn, tr],
-              pn.property_id == ^property_id and
+            pn.property_id == ^property_id and
               tr.date >= ^start_date and
               tr.date <= ^end_date
           )

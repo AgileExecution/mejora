@@ -85,6 +85,8 @@ defmodule MejoraWeb.Router do
       on_mount: [{MejoraWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/users/account_statement", Live.AccountStatement
+      live "/users/debts_and_receipts", Live.UserDebtsAndReceipts
     end
   end
 
@@ -97,7 +99,6 @@ defmodule MejoraWeb.Router do
       on_mount: [{MejoraWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
-      live "/users/account_statement", Live.AccountStatement
       live "/admin/payments", Live.AdminPaymentView
     end
   end

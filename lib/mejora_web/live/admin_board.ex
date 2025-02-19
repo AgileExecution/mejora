@@ -60,7 +60,7 @@ defmodule MejoraWeb.Live.AdminBoard do
 
       Map.get(role_order, role, 999)
     end)
-    |> Enum.map(fn member -> Map.put(member, :role, translate_role(member.role)) end)  # Aplica la traducción
+    |> Enum.map(fn member -> Map.put(member, :role, translate_role(member.role)) end)
   end
 
   defp group_and_sort_inactive_members(inactive_members) do
@@ -92,10 +92,10 @@ defmodule MejoraWeb.Live.AdminBoard do
 
     role =
       case role do
-        atom when is_atom(atom) -> Atom.to_string(atom)  # Convierte atom a string
-        string -> string  # Si ya es string, lo deja igual
+        atom when is_atom(atom) -> Atom.to_string(atom)
+        string -> string
       end
 
-    Map.get(translations, role, role)  # Si no está en la lista, devuelve el original
+    Map.get(translations, role, role)
   end
 end

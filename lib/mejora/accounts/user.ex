@@ -287,7 +287,7 @@ defmodule Mejora.Accounts.User do
 
         neighborhood_id =
           case active_board do
-            nil -> boards |> List.first() |> Map.get(:neighborhood_id) # Si no hay activo, tomamos el primero
+            nil -> boards |> List.first() |> Map.get(:neighborhood_id)
             _ -> active_board.neighborhood_id
           end
 

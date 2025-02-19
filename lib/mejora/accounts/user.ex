@@ -266,24 +266,33 @@ defmodule Mejora.Accounts.User do
   end
 
   def get_neighborhood_from_board_membership(user) do
-    board_membership =
+    board_memberships =
       Mejora.Boards.BoardMembership
       |> where([bm], bm.user_id == ^user.id)
-      |> Repo.one()
-      |> Repo.preload(:board)
+      |> join(:inner, [bm], b in assoc(bm, :board))
+      |> select([bm, b], %{board: b})
+      |> Repo.all()
+      |> Enum.map(& &1.board)
 
-    case board_membership do
-      nil ->
+    case board_memberships do
+      [] ->
         {:error, "No board membership found for user"}
 
-      %Mejora.Boards.BoardMembership{
-        board: %Mejora.Boards.Board{neighborhood_id: neighborhood_id}
-      } ->
-        neighborhood = Repo.get(Mejora.Neighborhoods.Neighborhood, neighborhood_id)
+      [board] ->
+        neighborhood = Repo.get(Mejora.Neighborhoods.Neighborhood, board.neighborhood_id)
         {:ok, neighborhood}
 
-      %Mejora.Boards.BoardMembership{} ->
-        {:error, "Board membership found, but board is not loaded"}
+      boards ->
+        active_board = Enum.find(boards, fn b -> b.status == :active end)
+
+        neighborhood_id =
+          case active_board do
+            nil -> boards |> List.first() |> Map.get(:neighborhood_id) # Si no hay activo, tomamos el primero
+            _ -> active_board.neighborhood_id
+          end
+
+        neighborhood = Repo.get(Mejora.Neighborhoods.Neighborhood, neighborhood_id)
+        {:ok, neighborhood}
     end
   end
 

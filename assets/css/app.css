@@ -74,6 +74,15 @@ body { @apply bg-background text-foreground; }
   font-style: normal;
 }
 
+header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  background-color: white;
+}
+
 #payment-history-cell {
   font-family: sans-serif;
   margin-bottom: 25px;
@@ -238,4 +247,63 @@ table td {
   background-color: #04ae04;
   --tw-ring-color: #04ae04;
   box-shadow: none !important;
+}
+
+.carousel-container {
+  overflow: hidden;
+  width: 100%;
+  max-width: 900px;
+}
+
+.carousel {
+  display: flex;
+  gap: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.carousel .card {
+  flex: 1 0 calc(33.4% - 10px);
+  max-width: calc(33.4% - 10px);
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .carousel .card {
+    flex: 1 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 600px) {
+  .carousel .card {
+    flex: 1 0 100%;
+    max-width: 100%;
+  }
+}
+
+.carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 40px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.carousel-btn:not(.disabled) {
+  background-color: #3257A0;
+  color: white;
+}
+
+.carousel-btn.disabled {
+  background-color: white;
+  color: #b0b0b0;
+  cursor: default;
 }

@@ -10,12 +10,18 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900"
+      rel="stylesheet"
+    />
   </head>
   <body class="bg-white">
-    <header class="sticky top-0 flex h-16 items-center gap-4 bg-background px-4 md:px-6" style="z-index:10">
+    <header
+      class="sticky top-0 flex h-16 items-center gap-4 bg-background px-4 md:px-6"
+      style="z-index:10"
+    >
       <div class="flex shrink-0 items-center">
         <.link href={~p"/"}>
           <img
@@ -51,56 +57,76 @@
         :if={Mejora.RBAC.has_permission?(@current_user, "view_stats")}
         class="hidden w-full justify-end flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6"
       >
-        <.dropdown_menu>
-          <.dropdown_menu_trigger>
-            <.link href={~p"/admin/dashboard"}>
-              <.button variant="ghost">Inicio</.button>
-            </.link>
-          </.dropdown_menu_trigger>
-        </.dropdown_menu>
+        <%= if @current_user === "admin" do %>
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/admin/dashboard"}>
+                <.button variant="ghost">Inicio</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
 
-        <.dropdown_menu>
-          <.dropdown_menu_trigger>
-            <.link href={~p"/admin/properties"}>
-              <.button variant="ghost">Propiedades</.button>
-            </.link>
-          </.dropdown_menu_trigger>
-        </.dropdown_menu>
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/admin/properties"}>
+                <.button variant="ghost">Propiedades</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
 
-        <.dropdown_menu>
-          <.dropdown_menu_trigger>
-            <.link href={~p"/admin/board"}>
-              <.button variant="ghost">Mesa Directiva</.button>
-            </.link>
-          </.dropdown_menu_trigger>
-        </.dropdown_menu>
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/admin/board"}>
+                <.button variant="ghost">Mesa Directiva</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
 
-        <.dropdown_menu>
-          <.dropdown_menu_trigger>
-            <.button variant="ghost">Mi Cuentra</.button>
-          </.dropdown_menu_trigger>
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.button variant="ghost">Mi Cuentra</.button>
+            </.dropdown_menu_trigger>
 
-          <.dropdown_menu_content>
-            <.menu class="w-56">
-              <.menu_group>
-                <.link href={~p"/admin/billing"}>
-                  <.menu_item>
-                    <.icon name="hero-banknotes" class="mr-2 h-4 w-4" />
-                    <span>Adeudos y Pagos</span>
-                  </.menu_item>
-                </.link>
-              </.menu_group>
-            </.menu>
-          </.dropdown_menu_content>
-        </.dropdown_menu>
+            <.dropdown_menu_content>
+              <.menu class="w-56">
+                <.menu_group>
+                  <.link href={~p"/admin/billing"}>
+                    <.menu_item>
+                      <.icon name="hero-banknotes" class="mr-2 h-4 w-4" />
+                      <span>Adeudos y Pagos</span>
+                    </.menu_item>
+                  </.link>
+                </.menu_group>
+              </.menu>
+            </.dropdown_menu_content>
+          </.dropdown_menu>
 
-        <.dropdown_menu>
-          <.dropdown_menu_trigger>
-            <.link href={~p"/admin/projects"}>
-              <.button variant="ghost">Proyectos</.button>
-            </.link>
-          </.dropdown_menu_trigger>
-        </.dropdown_menu>
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/admin/projects"}>
+                <.button variant="ghost">Proyectos</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
+        <% end %>
+
+        <%= if @current_user.role === "user" do %>
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/"}>
+                <.button variant="ghost">Inicio</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
+
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/users/board"}>
+                <.button variant="ghost">Mesa Directiva</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
+        <% end %>
 
         <%= if @current_user do %>
           <.dropdown_menu>

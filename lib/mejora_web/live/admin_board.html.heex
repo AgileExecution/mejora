@@ -1,0 +1,144 @@
+<div class="flex flex-col space-y-4 w-full max-w-4xl mx-auto">
+  <div class="flex justify-between items-center w-full">
+    <div>
+      <% board_name =
+        @boards
+        |> Enum.find(fn b -> b.id == @active_members |> List.first() |> Map.get(:board_id) end)
+        |> Map.get(:name, "Sin Nombre") %>
+
+      <h2 class="text-2xl font-bold text-left">
+        Mesa Directiva {board_name} ({@active_members
+        |> List.first()
+        |> Map.get(:year_range, "Sin Fecha")})
+      </h2>
+      <p class="text-blue-600 uppercase text-left">Conoce cómo se conforma</p>
+    </div>
+
+    <%= if length(@active_members) >= 3 do %>
+      <div class="flex space-x-2">
+        <button id="prev" class="carousel-btn disabled">⭠</button>
+        <button id="next" class="carousel-btn">⭢</button>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="carousel-container">
+    <div id="carousel" class="carousel">
+      <%= for member <- @active_members do %>
+        <div class="card">
+          <div class="w-full h-36 bg-gray-400 rounded-lg"></div>
+          <h3 class="text-lg font-bold mt-2">{member.role}</h3>
+          <p class="text-sm text-gray-600">{member.name}</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <h2 class="text-xl font-bold mt-8 text-left">Mesas Directivas Pasadas</h2>
+
+  <%= for {year_range, boards} <- Enum.sort(@inactive_members, fn {a, _}, {b, _} -> a > b end) do %>
+    <div class="relative w-full max-w-4xl overflow-hidden mt-6">
+      <div class="flex justify-between items-center w-full">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 text-left">Año {year_range}</h3>
+        </div>
+      </div>
+
+      <%= for {board_id, members} <- boards do %>
+        <% board_name =
+          @boards |> Enum.find(fn b -> b.id == board_id end) |> Map.get(:name, "Sin Nombre") %>
+
+        <div class="mt-4">
+          <div class="flex justify-between items-center w-full">
+            <h4 class="text-md font-semibold text-gray-500 text-left">
+              Mesa Directiva {board_name}
+            </h4>
+
+            <%= if length(members) >= 3 do %>
+              <div class="flex space-x-2">
+                <button
+                  id={"inactive-prev-#{year_range}-#{board_id}"}
+                  class="carousel-btn disabled"
+                >
+                  ⭠
+                </button>
+                <button id={"inactive-next-#{year_range}-#{board_id}"} class="carousel-btn">
+                  ⭢
+                </button>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="carousel-container">
+            <div id={"inactive-carousel-#{year_range}-#{board_id}"} class="carousel">
+              <%= for member <- members do %>
+                <div class="card">
+                  <div class="w-full h-36 bg-gray-400 rounded-lg"></div>
+                  <h3 class="text-lg font-bold mt-2">{member.role}</h3>
+                  <p class="text-sm text-gray-600">{member.name}</p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  function setupCarousel(carouselId, prevBtnId, nextBtnId) {
+    const carousel = document.getElementById(carouselId);
+    const prevBtn = document.getElementById(prevBtnId);
+    const nextBtn = document.getElementById(nextBtnId);
+
+    if (!carousel || !prevBtn || !nextBtn) return;
+
+    let offset = 0;
+
+    function getCardWidth() {
+        const firstCard = carousel.querySelector(".card");
+        return firstCard ? firstCard.offsetWidth + 10 : 0;
+    }
+
+    function updateButtons() {
+        const maxOffset = -(carousel.scrollWidth - carousel.parentElement.clientWidth);
+        prevBtn.classList.toggle("disabled", offset === 0);
+        nextBtn.classList.toggle("disabled", offset <= maxOffset);
+    }
+
+    prevBtn.addEventListener("click", () => {
+        if (offset < 0) {
+            offset += getCardWidth();
+            carousel.style.transform = `translateX(${offset}px)`;
+            updateButtons();
+        }
+    });
+
+    nextBtn.addEventListener("click", () => {
+        const maxOffset = -(carousel.scrollWidth - carousel.parentElement.clientWidth);
+
+        if (offset > maxOffset) {
+            offset -= getCardWidth();
+            carousel.style.transform = `translateX(${offset}px)`;
+            updateButtons();
+        }
+    });
+
+    updateButtons();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setupCarousel("carousel", "prev", "next");
+
+    <%= Phoenix.HTML.raw(
+      Enum.map(@inactive_members, fn {year_range, boards} ->
+        Enum.map(boards, fn {board_id, _members} ->
+          "setupCarousel(\"inactive-carousel-#{year_range}-#{board_id}\", \"inactive-prev-#{year_range}-#{board_id}\", \"inactive-next-#{year_range}-#{board_id}\");"
+        end)
+      end)
+      |> List.flatten()
+      |> Enum.join("\n")
+    ) %>
+  });
+</script>

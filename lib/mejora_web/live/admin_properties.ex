@@ -8,7 +8,7 @@ defmodule MejoraWeb.Live.AdminProperties do
 
   @impl true
   def mount(_params, _session, %{assigns: %{current_user: current_user}} = socket) do
-    case User.get_neighborhood_from_board_membership(current_user) do
+    case User.get_neighborhood_from_property_membership(current_user) do
       {:ok, neighborhood} ->
         monthly_quota = Neighborhoods.current_quota(neighborhood.id)
         neighborhood_quota = Neighborhoods.expected_monthly_quota(neighborhood.id)
@@ -209,6 +209,7 @@ defmodule MejoraWeb.Live.AdminProperties do
 
     {:noreply,
      socket
+     |> assign(:selected_status, selected_status)
      |> assign(:properties, paginated_properties)
      |> assign(:total_pages, total_pages)
      |> assign(:current_page, page)}

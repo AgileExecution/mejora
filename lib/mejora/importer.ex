@@ -1,6 +1,4 @@
 defmodule Mejora.Importer do
-  alias Ecto.Adapter.Transaction
-
   alias Mejora.{
     Accounts.User,
     Boards.Board,
@@ -9,7 +7,8 @@ defmodule Mejora.Importer do
     Providers.Provider,
     Importer.SpreadsheetErrors,
     Repo,
-    Transactions.Transaction
+    Transactions.PaymentNotice,
+    Transactions.PurchaseNotice
   }
 
   def extract_data(path) do
@@ -47,8 +46,8 @@ defmodule Mejora.Importer do
   defp get_worksheet_name(3), do: :people_old
   defp get_worksheet_name(4), do: :people
   defp get_worksheet_name(5), do: :providers
-  defp get_worksheet_name(6), do: :income_transactions
-  defp get_worksheet_name(7), do: :outcome_transactions
+  defp get_worksheet_name(6), do: :payment_notices
+  defp get_worksheet_name(7), do: :purchase_notices
   defp get_worksheet_name(8), do: :quotas
   defp get_worksheet_name(_), do: :unknown
 
@@ -62,8 +61,8 @@ defmodule Mejora.Importer do
       :properties,
       :people,
       :providers,
-      :income_transactions,
-      :outcome_transactions,
+      :payment_notices,
+      :purchase_notices,
       :people_old
     ]
 
@@ -75,10 +74,10 @@ defmodule Mejora.Importer do
         {:people_old, _data} ->
           false
 
-        {:income_transactions, _data} ->
+        {:payment_notices, _data} ->
           false
 
-        {:outcome_transactions, _data} ->
+        {:purchase_notices, _data} ->
           false
 
         _ ->
@@ -127,7 +126,19 @@ defmodule Mejora.Importer do
   end
 
   def do_truncate do
-    ["neighborhoods", "properties", "users", "boards", "providers", "transactions"]
+    [
+      "neighborhoods",
+      "properties",
+      "users",
+      "boards",
+      "providers",
+      "transactions",
+      "purchase_notices",
+      "payment_notices",
+      "quotas",
+      "board_memberships",
+      "property_memberships"
+    ]
     |> Enum.each(fn table ->
       case Mejora.Repo.query("TRUNCATE TABLE #{table} CASCADE") do
         {:ok, _result} ->
@@ -144,8 +155,8 @@ defmodule Mejora.Importer do
   defp get_schema(:properties), do: Property
   defp get_schema(:neighborhoods), do: Neighborhood
   defp get_schema(:people), do: User
-  defp get_schema(:income_transactions), do: Transaction
-  defp get_schema(:outcome_transactions), do: Transaction
+  defp get_schema(:payment_notices), do: PaymentNotice
+  defp get_schema(:purchase_notices), do: PurchaseNotice
   defp get_schema(:people_old), do: User
   defp get_schema(:quotas), do: Quota
 

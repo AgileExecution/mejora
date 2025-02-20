@@ -31,7 +31,7 @@
 
 
 <%= for quota <- @quotas do %>
-<section class="article-section">
+<section class="article-section cursor-pointer">
     <h3 class="payment-title">
       Notificacion de Pago
     </h3>
@@ -52,4 +52,30 @@
     <button class="button"> Pagar con Tarjeta </button>
     <button class="button bkg-green" > Notificar Pago </button>
     <button class="button bkg-light-blue" > Ver Pagos del Adeudo </button>
+</section>
+
+
+<br>
+<br>
+<br>
+
+<h3 class="header_II w-full text-center uppercase">
+    Proyectos Futuros
+</h3>
+
+<section class="yellow-card montserrat-font">
+    <p class="yellow-card-title" >
+        ¿Tienes una idea para nuestra comunidad? Proponla aqui.
+    </p>
+    <div class="yellow-card-content" >
+        <input
+            class="email-input w-full"
+            style="background-image: url('/images/mail_icon.svg')"
+            type="email"
+            placeholder="Email"
+            pattern=".+@example\.com"
+            size="30"
+            required />
+        <button class="button"> Proponer Proyecto </button>
+    </div>
 </section>

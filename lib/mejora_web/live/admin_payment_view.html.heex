@@ -14,13 +14,12 @@
       <p>entries</p>
     </span>
 
-
     <button>
       <img
-              class="block h-12 w-auto"
-              src={static_path(MejoraWeb.Endpoint, "/images/settings.svg")}
-              alt="Junta de Mejoras"
-            />
+        class="block h-12 w-auto"
+        src={static_path(MejoraWeb.Endpoint, "/images/settings.svg")}
+        alt="Junta de Mejoras"
+      />
     </button>
   </section>
 
@@ -28,17 +27,24 @@
     <table class="main-table montserrat-font">
       <tbody>
         <tr>
+<<<<<<< HEAD
           <td> Calle </td>
           <td> Numero </td>
           <%= for month <- @months do %>
             <td> <%= month %> </td>
+=======
+          <td>Calle</td>
+          <td>Numero</td>
+          <%= for month <- @content.table.months do %>
+            <td>{month}</td>
+>>>>>>> main
           <% end %>
         </tr>
 
         <%= for data <- @table_content do %>
           <tr>
-            <td> <%= data.street %> </td>
-            <td> <%= data.number %> </td>
+            <td>{data.street}</td>
+            <td>{data.number}</td>
 
             <%= for month <- @months do %>
               <td style="cursor:pointer"
@@ -50,12 +56,11 @@
                   class="green-type"
                   type="checkbox"
                   checked={Enum.member?(data.payed_months, month)}
-                   />
+                />
               </td>
             <% end %>
           </tr>
         <% end %>
-
       </tbody>
     </table>
   </section>
@@ -69,5 +74,4 @@
       <%= @current_comment %>
     </textarea>
   </section>
-
 </section>

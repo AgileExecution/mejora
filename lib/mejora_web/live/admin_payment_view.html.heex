@@ -27,17 +27,10 @@
     <table class="main-table montserrat-font">
       <tbody>
         <tr>
-<<<<<<< HEAD
           <td> Calle </td>
           <td> Numero </td>
           <%= for month <- @months do %>
             <td> <%= month %> </td>
-=======
-          <td>Calle</td>
-          <td>Numero</td>
-          <%= for month <- @content.table.months do %>
-            <td>{month}</td>
->>>>>>> main
           <% end %>
         </tr>
 
@@ -47,16 +40,8 @@
             <td>{data.number}</td>
 
             <%= for month <- @months do %>
-              <td style="cursor:pointer"
-                    phx-click="selected-comment"
-                    phx-value-month={month}
-                    phx-value-record-id={data.id}
-               >
-                <input
-                  class="green-type"
-                  type="checkbox"
-                  checked={Enum.member?(data.payed_months, month)}
-                />
+              <td style="cursor:pointer" phx-click="selected-comment" phx-value-identifier={"#{data.id}_#{month}"} >
+                <input class="green-type" type="checkbox" checked={Map.get(@month_grid,"#{data.id}_#{month}").paid} />
               </td>
             <% end %>
           </tr>
@@ -68,10 +53,14 @@
   <section>
     <span class="flex flex-row justify-end">
       <button style="margin:0px; width:min-content" class="button montserrat-font outlined"> Comentarios Tesorero </button>
-      <button style="margin:0px; width:min-content" class="button montserrat-font"> Tesorero Autoriza </button>
+      <button style="margin:0px; width:min-content" class="button montserrat-font"
+        phx-click="submit"
+      > Tesorero Autoriza </button>
     </span>
-    <textarea id="w3review" name="w3review" rows="4" cols="50" style="width:100%; margin-top:10px">
-      <%= @current_comment %>
-    </textarea>
+    <form>
+      <textarea id="comment-area"  phx-change="update_text"  name="comment-area" rows="4" cols="50" style="width:100%; margin-top:10px">
+        <%= @selected_input.comment %>
+      </textarea>
+    </form>
   </section>
 </section>

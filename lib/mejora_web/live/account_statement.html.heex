@@ -73,7 +73,6 @@
         <p class="font-thin" >        Actualizado Nov 24, 2024         </p>
       </span>
     </div>
-<<<<<<< HEAD
   </div>
 </section>
 
@@ -112,31 +111,4 @@
       </article>
     <% end %>
   </div>
-=======
-
-    <br />
-    <br />
-
-    <div
-      id="border-box-v2"
-      style="height: 700px;    overflow: auto;    padding: 25px 30px 0px; scrollbar-width: thin;"
-    >
-      <%= for card <- @content.transactions do %>
-        <article id="payment-history-cell" class="font-semibold">
-          <span class="flex flex-row justify-between w-full">
-            <p>
-              {Date.to_string(card.due_date)}
-            </p>
-            <p class="green-color">
-              {Number.Currency.number_to_currency(card.total)}
-            </p>
-          </span>
-
-          <p style="opacity:0.5">Pago de Residentes</p>
-          <p class="blue-color">Transferencia Bancaria</p>
-        </article>
-      <% end %>
-    </div>
-  </section>
->>>>>>> main
 </section>

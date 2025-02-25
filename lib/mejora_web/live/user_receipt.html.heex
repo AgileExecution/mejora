@@ -1,0 +1,67 @@
+<h3 class="black-title montserrat-font w-full text-center">
+    Adeudos y Comprobantes de Pago
+</h3>
+<br>
+<br>
+
+<section class="article-section cursor-pointer">
+    <h3 class="payment-title">
+      Notificacion de Pago
+    </h3>
+    <ul class="border-box-v2 article-list" >
+        <li> Folio:                 <%= @quota.id %>       </li>
+        <li> Concepto:              <%= @quota.concept %>  </li>
+        <li> Importe del Adeudo:    <%= currency(@quota.incoming) %> </li>
+    </ul>
+</section>
+
+<section class="article-section cursor-pointer">
+    <h3 class="payment-title">
+      Forma de Pago
+    </h3>
+    <ul class="border-box-v2 article-list" >
+        <li> Folio:                 <%= @quota.id %>       </li>
+        <li> Concepto:              <%= @quota.concept %>  </li>
+        <li> Importe del Adeudo:    <%= currency(@quota.incoming) %> </li>
+    </ul>
+</section>
+
+<section class="article-section cursor-pointer">
+    <h3 class="payment-title">
+      Cuenta Destino
+    </h3>
+    <ul class="border-box-v2 article-list" >
+        <li> Folio:                 <%= @quota.id %>       </li>
+        <li> Concepto:              <%= @quota.concept %>  </li>
+        <li> Importe del Adeudo:    <%= currency(@quota.incoming) %> </li>
+    </ul>
+</section>
+
+<section class="article-section cursor-pointer">
+    <h3 class="payment-title">
+      Importe Pagado
+    </h3>
+    <ul class="border-box-v2 article-list" >
+        <li> Folio:                 <%= @quota.id %>       </li>
+        <li> Concepto:              <%= @quota.concept %>  </li>
+        <li> Importe del Adeudo:    <%= currency(@quota.incoming) %> </li>
+    </ul>
+</section>
+
+<section class="article-section cursor-pointer">
+    <h3 class="payment-title">
+      Concepto
+    </h3>
+    <ul class="border-box-v2 article-list" >
+        <li> Folio:                 <%= @quota.id %>       </li>
+        <li> Concepto:              <%= @quota.concept %>  </li>
+        <li> Importe del Adeudo:    <%= currency(@quota.incoming) %> </li>
+    </ul>
+</section>
+
+
+<section class="article-section flex flex-col">
+    <button class="button"> Tomar Fotografía </button>
+    <button class="button bkg-green" > Seleccionar Fotografía </button>
+    <button class="button bkg-light-blue" > Notificar Pago </button>
+</section>

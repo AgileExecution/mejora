@@ -78,7 +78,7 @@ defmodule MejoraWeb.Live.AdminPaymentView do
     {:noreply, socket}
   end
 
-  def divide_month_grid(month_grid) do
+  # def divide_month_grid(month_grid) do
     # update_these = month_grid
     #                   |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) end)
 
@@ -89,7 +89,7 @@ defmodule MejoraWeb.Live.AdminPaymentView do
     #                 |> Repo.insert!()
 
     # %{ update: update_these, save: save_these }
-  end
+  # end
 
   def parse_month_grid(month_grid) do
     month_grid

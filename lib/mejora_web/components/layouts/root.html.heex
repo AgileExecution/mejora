@@ -96,6 +96,12 @@
                       <span>Adeudos y Pagos</span>
                     </.menu_item>
                   </.link>
+                  <.link href={~p"/admin/payments"}>
+                    <.menu_item>
+                      <.icon name="hero-banknotes" class="mr-2 h-4 w-4" />
+                      <span>Registro de Pagos</span>
+                    </.menu_item>
+                  </.link>
                 </.menu_group>
               </.menu>
             </.dropdown_menu_content>
@@ -123,6 +129,22 @@
             <.dropdown_menu_trigger>
               <.link href={~p"/users/board"}>
                 <.button variant="ghost">Mesa Directiva</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
+
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/users/account_statement"}>
+                <.button variant="ghost">Estado de Cuenta</.button>
+              </.link>
+            </.dropdown_menu_trigger>
+          </.dropdown_menu>
+
+          <.dropdown_menu>
+            <.dropdown_menu_trigger>
+              <.link href={~p"/users/debts_and_receipts"}>
+                <.button variant="ghost">Deudas y Recibos</.button>
               </.link>
             </.dropdown_menu_trigger>
           </.dropdown_menu>

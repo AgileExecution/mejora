@@ -9,7 +9,9 @@
     <.card_header>
       <.card_title>Total de Adeudos: {Enum.count(@unpaid_payment_notices)}</.card_title>
       <.card_description>
-        Emisión {@payment_notice.inserted_at} | Vencimiento {@payment_notice.due_date} <br />
+        <%= if @payment_notice do %>
+          Emisión {@payment_notice.inserted_at} | Vencimiento {@payment_notice.due_date} <br />
+        <% end %>
         <strong>
           Importe: ${pending_amount(@unpaid_payment_notices)} |  Pagado: $0.00  | Pendiente: ${pending_amount(
             @unpaid_payment_notices

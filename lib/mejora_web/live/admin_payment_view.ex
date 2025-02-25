@@ -79,8 +79,8 @@ defmodule MejoraWeb.Live.AdminPaymentView do
   end
 
   def divide_month_grid(month_grid) do
-    update_these = month_grid
-                      |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) end)
+    # update_these = month_grid
+    #                   |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) end)
 
     # save_these = month_grid
     #                 |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) |> Kernel.not() end)

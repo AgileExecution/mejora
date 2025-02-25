@@ -57,7 +57,7 @@
         :if={Mejora.RBAC.has_permission?(@current_user, "view_stats")}
         class="hidden w-full justify-end flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6"
       >
-        <%= if @current_user === "admin" do %>
+        <%= if @current_user.role === "admin" do %>
           <.dropdown_menu>
             <.dropdown_menu_trigger>
               <.link href={~p"/admin/dashboard"}>

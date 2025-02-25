@@ -88,6 +88,7 @@ defmodule MejoraWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/users/account_statement", Live.AccountStatement
       live "/users/debts_and_receipts", Live.UserDebtsAndReceipts
+      live "/users/debts_and_receipts/:id", Live.UserReceipt
     end
   end
 

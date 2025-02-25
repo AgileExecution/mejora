@@ -11,7 +11,7 @@ defmodule MejoraWeb.Live.AdminPaymentView do
   def mount(_params, _session, socket) do
     month_grid = PaymentNotice
               |> Repo.all()
-              |> Enum.map(fn pnot -> {"#{pnot.property_id}_#{convert_date_to_month(pnot.due_date)}", %{paid: pnot.status == :paid, comment: pnot.comments}}  end)
+              |> Enum.map(fn pnot -> {"#{pnot.property_id}_#{convert_date_to_month(pnot.due_date)}", %{paid: pnot.status == :paid, comment: pnot.comments, id: pnot.id}}  end)
               |> Map.new
 
     properties = Repo.all(Property)
@@ -49,10 +49,7 @@ defmodule MejoraWeb.Live.AdminPaymentView do
     focused_on = socket.assigns.focused_on
 
     selected_value = Map.get(month_grid, focused_on)
-
     month_grid_v2 = month_grid |> Map.put(focused_on, Map.put(selected_value, :comment, value))
-
-    # IO.puts "█ █ ▄▀█ █   █ █ █▀▀ \n▀▄▀ █▀█ █▄▄ █▄█ ██▄ focused-on: #{focused_on} ---- #{value}"
 
     {:noreply, assign(socket, :month_grid, month_grid_v2)}
   end
@@ -76,19 +73,47 @@ defmodule MejoraWeb.Live.AdminPaymentView do
 
   def handle_event("submit", _value, socket) do
     month_grid = socket.assigns.month_grid
-    #                |> Enum.map(fn {k, v} ->
-    #                   [property_id, month] = String.split(k, "_")
-
-    #                   %{
-    #                     property_id: property_id,
-    #                     due_date: month,
-    #                     comments: v.comment,
-    #                     status: v.status
-    #                   }
-    #                 end)
 
     IO.inspect(month_grid)
     {:noreply, socket}
+  end
+
+  def divide_month_grid(month_grid) do
+    update_these = month_grid
+                      |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) end)
+
+    # save_these = month_grid
+    #                 |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) |> Kernel.not() end)
+    #                 |> parse_month_grid()
+    #                 |> PaymentNotice.embedded_changeset()
+    #                 |> Repo.insert!()
+
+    # %{ update: update_these, save: save_these }
+  end
+
+  def parse_month_grid(month_grid) do
+    month_grid
+        |> Enum.map(fn {k, v} ->
+            [property_id, month] = String.split(k, "_")
+            p_month = Enum.find_index(@months, fn m -> m == month end)
+
+            neighborhood = if property_id == "1" do "15 de Mayo" else "Colima" end
+            date = {2024, p_month, 11}
+            paid = if v.paid do 1 else 0 end
+            comment = v.comment
+
+            {
+              [
+                neighborhood,
+                "300",
+                date,
+                comment,
+                "500.00",
+                :sale
+              ],
+              paid
+            }
+          end)
   end
 
   def convert_payment_notice_to_payed_months(payment_notice) do

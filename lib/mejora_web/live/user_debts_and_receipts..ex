@@ -13,7 +13,16 @@ defmodule MejoraWeb.Live.UserDebtsAndReceipts do
           incoming: 750,
           payed: 0,
           pending: 750,
-        }
+        },
+          %{
+            id: 39,
+            concept: "General",
+            date_start: "01-07-2025",
+            date_end: "10-07-2025",
+            incoming: 750,
+            payed: 0,
+            pending: 750,
+          }
       ]
     }
 

@@ -1,9 +1,11 @@
 defmodule Mejora.Transactions.PaymentNotice do
   use Ecto.Schema
 
+  import Ecto.Query
   import Ecto.Changeset
   import Mejora.Utils
 
+  alias Mejora.Repo
   alias Mejora.Properties.Property
   alias Mejora.Transactions.Transaction
 
@@ -41,16 +43,16 @@ defmodule Mejora.Transactions.PaymentNotice do
   end
 
   def parse_record(record) do
-    property =
-      [street: Enum.at(record, 0), number: Enum.at(record, 1)]
-      |> Mejora.Properties.get_properties()
+    property = Property
+      |> where(^[street: Enum.at(record, 0), number: Enum.at(record, 1)])
+      |> Repo.all()
       |> List.first()
       |> maybe_nil_record()
 
     date = parse_datetime(Enum.at(record, 2))
 
     %{
-      status: :paid,
+      status: Enum.at(record, 6),
       due_date: date,
       comments: Enum.at(record, 3),
       total: Enum.at(record, 4),

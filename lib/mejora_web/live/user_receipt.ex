@@ -1,7 +1,7 @@
 defmodule MejoraWeb.Live.UserReceipt do
   use MejoraWeb, :live_view
 
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     quota = %{
       id: 38,
       concept: "General",

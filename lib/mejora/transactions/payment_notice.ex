@@ -43,7 +43,8 @@ defmodule Mejora.Transactions.PaymentNotice do
   end
 
   def parse_record(record) do
-    property = Property
+    property =
+      Property
       |> where(^[street: Enum.at(record, 0), number: Enum.at(record, 1)])
       |> Repo.all()
       |> List.first()

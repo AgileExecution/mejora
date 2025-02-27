@@ -3,8 +3,7 @@ defmodule MejoraWeb.Live.UserDebtsAndReceipts do
 
   def mount(_params, _session, socket) do
     content = %{
-      quotas:
-      [
+      quotas: [
         %{
           id: 38,
           concept: "General",
@@ -12,7 +11,7 @@ defmodule MejoraWeb.Live.UserDebtsAndReceipts do
           date_end: "10-07-2025",
           incoming: 750,
           payed: 0,
-          pending: 750,
+          pending: 750
         }
       ]
     }
@@ -22,12 +21,11 @@ defmodule MejoraWeb.Live.UserDebtsAndReceipts do
 
   def pending_sum(list) do
     list
-      |> Enum.reduce(0, fn(arr, acc) -> arr.pending + acc end)
-      |> Number.Currency.number_to_currency()
+    |> Enum.reduce(0, fn arr, acc -> arr.pending + acc end)
+    |> Number.Currency.number_to_currency()
   end
 
   def currency(num) do
     Number.Currency.number_to_currency(num)
   end
-
 end

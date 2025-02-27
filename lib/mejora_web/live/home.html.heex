@@ -1,0 +1,130 @@
+<section class="home-gestion-integral">
+  <div class="home-container">
+    <div class="home-text-section">
+      <h1>Gestión Integral</h1>
+      <p>
+        Simplifica la administración, conecta a tu comunidad y mejora la calidad de vida en tu colonia
+      </p>
+      <a href="#" class="home-button">Watch Demo</a>
+    </div>
+    <div class="home-image-section">
+      <div class="home-row">
+        <div class="home-box"></div>
+        <div class="home-box"></div>
+      </div>
+      <div class="home-box home-center-box"></div>
+    </div>
+  </div>
+</section>
+
+<section class="home-carousel">
+  <div class="home-carousel-wrapper">
+    <button class="home-carousel-btn home-prev disabled" onclick="prevSlide()">&#8592;</button>
+    <div class="home-carousel-container">
+      <div class="home-carousel-slide">
+        <div class="home-carousel-item">
+          <h2>Misión</h2>
+          <p>
+            Ser un organismo representativo que promueva el desarrollo, la seguridad y el bienestar de los residentes mediante una gestión eficiente, participativa y orientada al mejoramiento continuo del entorno comunitario.
+          </p>
+        </div>
+        <div class="home-carousel-item">
+          <h2>Visión</h2>
+          <p>
+            Ser un referente en la gestión comunitaria con soluciones innovadoras que fortalezcan la participación ciudadana y el bienestar colectivo.
+          </p>
+        </div>
+        <div class="home-carousel-item">
+          <h2>Valores</h2>
+          <p>
+            Compromiso, transparencia, participación y responsabilidad son los pilares que rigen nuestra labor en la comunidad.
+          </p>
+        </div>
+      </div>
+    </div>
+    <button class="home-carousel-btn home-next" onclick="nextSlide()">&#8594;</button>
+  </div>
+  <div class="home-carousel-indicators">
+    <span class="home-indicator active" onclick="goToSlide(0)"></span>
+    <span class="home-indicator" onclick="goToSlide(1)"></span>
+    <span class="home-indicator" onclick="goToSlide(2)"></span>
+  </div>
+</section>
+
+<section class="home-junta-mejoras">
+  <div class="home-container">
+    <div class="home-text-section">
+      <h1>Junta de Mejoras</h1>
+    </div>
+    <div class="home-cards">
+      <div class="home-card">
+        <h3>Objetivo Principal</h3>
+        <p>Promover la seguridad y el bienestar</p>
+      </div>
+      <div class="home-card">
+        <h3>Objetivo Secundario</h3>
+        <p>Fomentar la participación comunitaria</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="home-footer">
+  <div class="home-footer-container">
+    <div class="home-footer-brand">
+      <img src="logo.png" alt="Junta de Mejoras" />
+      <h2>Junta de Mejoras</h2>
+      <p>Promover decisiones justas que beneficien a toda la comunidad.</p>
+      <div class="home-footer-socials">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    <div class="home-footer-links">
+      <h3>Contacto</h3>
+      <ul>
+        <li><a href="#">Mesa Directiva</a></li>
+        <li><a href="#">Mi Cuenta</a></li>
+        <li><a href="#">FAQ’s</a></li>
+        <li><a href="#">Proyectos</a></li>
+      </ul>
+    </div>
+    <div class="home-footer-info">
+      <h3>Nosotros</h3>
+      <p>+00 92 1234 56789</p>
+      <p>info@juntademejoras.com</p>
+      <p>Dirección aquí</p>
+      <p>Disclaimer: Aviso de Privacidad</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  let currentSlide = 0;
+  function updateSlide() {
+      const slideContainer = document.querySelector(".home-carousel-slide");
+      slideContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+      document.querySelectorAll(".home-indicator").forEach((el, index) => {
+          el.classList.toggle("active", index === currentSlide);
+      });
+      document.querySelector(".home-prev").classList.toggle("disabled", currentSlide === 0);
+      document.querySelector(".home-next").classList.toggle("disabled", currentSlide === 2);
+  }
+  function nextSlide() {
+      if (currentSlide < 2) {
+          currentSlide++;
+          updateSlide();
+      }
+  }
+  function prevSlide() {
+      if (currentSlide > 0) {
+          currentSlide--;
+          updateSlide();
+      }
+  }
+  function goToSlide(index) {
+      currentSlide = index;
+      updateSlide();
+  }
+</script>

@@ -494,6 +494,7 @@ table td {
   display: flex;
   flex-direction: column;
 }
+
 /* Home page */
 .home-junta-mejoras {
   display: flex;

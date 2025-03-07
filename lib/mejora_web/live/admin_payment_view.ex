@@ -1,12 +1,13 @@
 defmodule MejoraWeb.Live.AdminPaymentView do
   use MejoraWeb, :live_view
+  import Ecto.Query
 
   alias Mejora.Repo
   alias Mejora.Properties.Property
   alias Mejora.Transactions.PaymentNotice
 
   @months ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  @default_case %{paid: false, comment: ""}
+  @default_case %{paid: false, comments: ""}
 
   def mount(_params, _session, socket) do
     month_grid =
@@ -14,7 +15,7 @@ defmodule MejoraWeb.Live.AdminPaymentView do
       |> Repo.all()
       |> Enum.map(fn pnot ->
         {"#{pnot.property_id}_#{convert_date_to_month(pnot.due_date)}",
-         %{paid: pnot.status == :paid, comment: pnot.comments, id: pnot.id}}
+         %{paid: pnot.status == :paid, comments: pnot.comments, id: pnot.id}}
       end)
       |> Map.new()
 
@@ -40,13 +41,6 @@ defmodule MejoraWeb.Live.AdminPaymentView do
       end)
       |> Map.new()
 
-    # %{
-    #   "1_Aug" => %{status: true, comment: "Mensualidad de dos meses"},
-    #   "1_Jul" => %{status: true, comment: "Mensualidad faltante"},
-    #   "1_Sep" => %{status: false, comment: "Mensualidad de dos meses"},
-    #   "2_Oct" => %{status: false, comment: "Mensualidad faltante"}
-    # }
-
     content = %{
       table_content: properties,
       months: @months,
@@ -63,12 +57,15 @@ defmodule MejoraWeb.Live.AdminPaymentView do
     focused_on = socket.assigns.focused_on
 
     selected_value = Map.get(month_grid, focused_on)
-    month_grid_v2 = month_grid |> Map.put(focused_on, Map.put(selected_value, :comment, value))
+
+    month_grid_v2 =
+      month_grid
+      |> Map.put(focused_on, Map.put(selected_value, :comments, value))
 
     {:noreply, assign(socket, :month_grid, month_grid_v2)}
   end
 
-  def handle_event("selected-comment", %{"identifier" => identifier}, socket) do
+  def handle_event("selected-input", %{"identifier" => identifier}, socket) do
     month_grid = socket.assigns.month_grid
 
     selected_value = month_grid |> Map.get(identifier)
@@ -76,8 +73,6 @@ defmodule MejoraWeb.Live.AdminPaymentView do
     month_grid_v2 =
       month_grid
       |> Map.put(identifier, Map.put(selected_value, :paid, Kernel.not(selected_value.paid)))
-
-    IO.inspect(selected_value)
 
     new_sock =
       socket
@@ -90,58 +85,56 @@ defmodule MejoraWeb.Live.AdminPaymentView do
 
   def handle_event("submit", _value, socket) do
     month_grid = socket.assigns.month_grid
+    divide_month_grid(month_grid)
 
     IO.inspect(month_grid)
     {:noreply, socket}
   end
 
-  # def divide_month_grid(month_grid) do
-  # update_these = month_grid
-  #                   |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) end)
+  def divide_month_grid(month_grid) do
+    update_these =
+      month_grid
+      |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) end)
+      |> Enum.map(fn record ->
+        element = record |> elem(1)
+        id = element |> Map.get(:id)
 
-  # save_these = month_grid
-  #                 |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) |> Kernel.not() end)
-  #                 |> parse_month_grid()
-  #                 |> PaymentNotice.embedded_changeset()
-  #                 |> Repo.insert!()
+        attr = %{
+          comments: Map.get(element, :comments),
+          status: boolean_paid(Map.get(element, :paid))
+        }
 
-  # %{ update: update_these, save: save_these }
-  # end
+        PaymentNotice |> Repo.get(id) |> Ecto.Changeset.change(attr) |> Repo.update()
+      end)
+
+    save_these =
+      month_grid
+      |> Enum.filter(fn x -> x |> elem(1) |> Map.has_key?(:id) |> Kernel.not() end)
+      |> parse_month_grid()
+      |> Enum.map(fn m ->
+        PaymentNotice.embedded_changeset(m) |> Repo.insert!()
+      end)
+
+    %{update: update_these, save: save_these}
+  end
 
   def parse_month_grid(month_grid) do
     month_grid
     |> Enum.map(fn {k, v} ->
       [property_id, month] = String.split(k, "_")
-      p_month = Enum.find_index(@months, fn m -> m == month end)
 
-      neighborhood =
-        if property_id == "1" do
-          "15 de Mayo"
-        else
-          "Colima"
-        end
+      p_month = Enum.find_index(@months, fn m -> m == month end) + 1
+      [street, prop_number] = retrieve_property(property_id)
 
+      paid = boolean_paid(v.paid)
       date = {2024, p_month, 11}
-
-      paid =
-        if v.paid do
-          1
-        else
-          0
-        end
-
-      comment = v.comment
+      comments = v.comments
+      index = 0
+      quota = "500.00"
 
       {
-        [
-          neighborhood,
-          "300",
-          date,
-          comment,
-          "500.00",
-          :sale
-        ],
-        paid
+        [street, prop_number, date, comments, quota, :sale, paid],
+        index
       }
     end)
   end
@@ -156,5 +149,20 @@ defmodule MejoraWeb.Live.AdminPaymentView do
 
   def convert_date_to_month(due_date) do
     Enum.at(@months, due_date.month - 1)
+  end
+
+  def boolean_paid(boolean) do
+    if boolean do
+      :paid
+    else
+      :unpaid
+    end
+  end
+
+  def retrieve_property(property_id) do
+    {id, _} = Integer.parse(property_id)
+    found = Property |> where(id: ^id) |> Repo.all() |> List.first()
+
+    [found.street, found.number]
   end
 end

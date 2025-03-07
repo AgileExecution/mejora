@@ -302,6 +302,7 @@ table td {
   margin: auto auto 5px;
   white-space: nowrap;
   font-weight: 500;
+  opacity: 0.9
 }
 
 .button.outlined {
@@ -460,6 +461,38 @@ table td {
   background-color: white;
   color: #b0b0b0;
   cursor: default;
+}
+
+.gray-bkg {
+  background-color: #f2f5f5;
+  padding: 2rem 1rem;
+}
+
+.button.light {
+  background-color: #e8e8e8;
+  color: #191825;
+}
+
+.button:hover {
+  transform: scale(1.01);
+  opacity: 1 !important;
+}
+
+.upload-receipt-area {
+  border: #FEFFFE solid 1px;
+  border-color: black !important;
+  padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box-v3 {
+  background-color: #eeeded;
+  margin: 25px 19px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Home page */
@@ -837,4 +870,31 @@ table td {
   .form-group {
     flex-direction: column;
   }
+}
+
+.icon-box {
+  padding: 14px;
+  margin: auto 18px;
+  border-radius: 10px;
+  height: 75px;
+  width: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.announcement {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: row;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 3px solid rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: row;
+}
+
+.link-label:hover {
+  cursor: pointer;
+  text-decoration: 2px underline;
 }

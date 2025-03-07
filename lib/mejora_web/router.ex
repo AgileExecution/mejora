@@ -30,7 +30,6 @@ defmodule MejoraWeb.Router do
       live "/projects", Live.Projects
       live "/billing", Live.Billing
       live "/properties", Live.AdminProperties
-      # live "/payments", Live.AdminPaymentView
     end
   end
 

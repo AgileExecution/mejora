@@ -42,7 +42,7 @@
             <%= for month <- @months do %>
               <td
                 style="cursor:pointer"
-                phx-click="selected-comment"
+                phx-click="selected-input"
                 phx-value-identifier={"#{data.id}_#{month}"}
               >
                 <input
@@ -72,13 +72,14 @@
       </button>
     </span>
     <form>
+      <p><b>Comments from: </b>{@focused_on}</p>
       <textarea
         id="comment-area"
         phx-change="update_text"
         name="comment-area"
         style="width:100%; margin-top:10px"
       >
-        <%= @selected_input.comment %>
+        <%= @selected_input.comments %>
       </textarea>
     </form>
   </section>

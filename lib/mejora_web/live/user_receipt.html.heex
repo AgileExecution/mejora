@@ -11,7 +11,9 @@
   <ul class="border-box-v2 article-list">
     <li>Folio: {@quota.id}</li>
     <li>Concepto: {@quota.concept}</li>
+    <li>Vencimiento: {@quota.due_date}</li>
     <li>Importe del Adeudo: {currency(@quota.incoming)}</li>
+    <li>Comments: {@quota.comments}</li>
   </ul>
 </section>
 
@@ -19,44 +21,46 @@
   <h3 class="payment-title">
     Forma de Pago
   </h3>
-  <ul class="border-box-v2 article-list">
-    <li>Folio: {@quota.id}</li>
-    <li>Concepto: {@quota.concept}</li>
-    <li>Importe del Adeudo: {currency(@quota.incoming)}</li>
-  </ul>
+  <p class="border-box-v2 text-xl gray-bkg font-semibold">
+    -- Seleccione --
+  </p>
 </section>
 
 <section class="article-section cursor-pointer">
   <h3 class="payment-title">
     Cuenta Destino
   </h3>
-  <ul class="border-box-v2 article-list">
-    <li>Folio: {@quota.id}</li>
-    <li>Concepto: {@quota.concept}</li>
-    <li>Importe del Adeudo: {currency(@quota.incoming)}</li>
-  </ul>
+  <p class="border-box-v2 text-xl gray-bkg font-semibold">
+    -- Seleccione --
+  </p>
 </section>
 
 <section class="article-section cursor-pointer">
   <h3 class="payment-title">
     Importe Pagado
   </h3>
-  <ul class="border-box-v2 article-list">
-    <li>Folio: {@quota.id}</li>
-    <li>Concepto: {@quota.concept}</li>
-    <li>Importe del Adeudo: {currency(@quota.incoming)}</li>
-  </ul>
+  <div class="border-box-v2 text-xl gray-bkg font-semibold">
+    <input type="number" />
+  </div>
 </section>
 
 <section class="article-section cursor-pointer">
   <h3 class="payment-title">
     Concepto
   </h3>
-  <ul class="border-box-v2 article-list">
-    <li>Folio: {@quota.id}</li>
-    <li>Concepto: {@quota.concept}</li>
-    <li>Importe del Adeudo: {currency(@quota.incoming)}</li>
-  </ul>
+  <div class="border-box-v2 flex flex-col text-xl gray-bkg font-semibold">
+    <p>-- Seleccione --</p>
+    <button class="button light">Mantenimiento</button>
+    <button class="button light">Tarjeta Vehicular</button>
+    <button class="button light">Otro</button>
+  </div>
+  <div class="box-v3">
+    <p>Comprobante</p>
+    <span class="upload-receipt-area">
+      <label> Da click para subir comprobante </label>
+      <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+    </span>
+  </div>
 </section>
 
 <section class="article-section flex flex-col">

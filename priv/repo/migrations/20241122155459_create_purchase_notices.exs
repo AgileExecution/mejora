@@ -8,6 +8,7 @@ defmodule Mejora.Repo.Migrations.CreatePurchaseNotices do
       add :total, :decimal
       add :status, :string
       add :neighborhood_id, :integer
+      add :provider_id, :integer
       add :comments, :string
       add :metadata, :jsonb, default: "{}", null: false
 

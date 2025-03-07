@@ -2,6 +2,7 @@ defmodule MejoraWeb.Router do
   use MejoraWeb, :router
 
   import MejoraWeb.UserAuth
+  import Backpex.Router
 
   pipeline :admin do
     plug MejoraWeb.Plugs.AuthorizeRole, ["admin"]
@@ -23,6 +24,12 @@ defmodule MejoraWeb.Router do
 
   scope "/admin", MejoraWeb do
     pipe_through [:browser, :require_authenticated_user, :admin]
+
+    backpex_routes()
+
+    live_session :default, on_mount: Backpex.InitAssigns do
+      live_resources "/payment_notices", PaymentNoticeLive
+    end
 
     live_session :admin, on_mount: [{MejoraWeb.UserAuth, :ensure_authenticated}] do
       live "/dashboard", Live.AdminDashboard

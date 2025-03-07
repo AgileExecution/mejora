@@ -109,7 +109,8 @@ defmodule MejoraWeb do
         Table,
         Label,
         Form,
-        Select
+        Select,
+        Alert
       }
 
       # Shortcut for generating JS commands

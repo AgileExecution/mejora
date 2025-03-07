@@ -9,7 +9,8 @@ module.exports = {
   content: [
     "./js/**/*.js",
     "../lib/mejora_web.ex",
-    "../lib/mejora_web/**/*.*ex"
+    "../lib/mejora_web/**/*.*ex",
+    '../deps/backpex/**/*.*ex'
   ],
   theme: {
     extend: {
@@ -19,7 +20,7 @@ module.exports = {
   plugins: [
     require("@tailwindcss/typography"),
     //require("tailwindcss-animate"),
-    require("@tailwindcss/forms"),
+    //require("@tailwindcss/forms"),
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //

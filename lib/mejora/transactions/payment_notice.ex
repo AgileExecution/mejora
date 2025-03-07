@@ -27,6 +27,9 @@ defmodule Mejora.Transactions.PaymentNotice do
     timestamps()
   end
 
+  def create_changeset(_changeset, _attrs, _), do: nil
+  def update_changeset(_changeset, _attrs, _), do: nil
+
   def embedded_changeset({record, index}) do
     fields = __schema__(:fields) ++ [:index]
 
@@ -73,4 +76,35 @@ defmodule Mejora.Transactions.PaymentNotice do
 
   defp maybe_nil_record(nil), do: %{id: nil}
   defp maybe_nil_record(record), do: record
+
+  def fields_for_admin_backend() do
+    [
+      due_date: %{
+        module: Backpex.Fields.Date,
+        label: "Due Date"
+      },
+      invoice_number: %{
+        module: Backpex.Fields.Text,
+        label: "Invoice Number"
+      },
+      total: %{
+        module: Backpex.Fields.Currency,
+        label: "Total"
+      },
+      status: %{
+        module: Backpex.Fields.Select,
+        label: "Status",
+        options: [Unpaid: :unpaid, Pending: :pending, Paid: :paid, Cancelled: :cancalled]
+      },
+      comments: %{
+        module: Backpex.Fields.Textarea,
+        label: "Comments"
+      },
+      property: %{
+        module: Backpex.Fields.Select,
+        label: "Property",
+        options: []
+      }
+    ]
+  end
 end

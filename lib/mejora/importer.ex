@@ -3,6 +3,7 @@ defmodule Mejora.Importer do
     Accounts.User,
     Boards.Board,
     Neighborhoods.Neighborhood,
+    Neighborhoods.Quota,
     Properties.Property,
     Providers.Provider,
     Importer.SpreadsheetErrors,
@@ -80,6 +81,9 @@ defmodule Mejora.Importer do
         {:purchase_notices, _data} ->
           false
 
+        {:people, _data} ->
+          false
+
         _ ->
           true
       end)
@@ -89,19 +93,27 @@ defmodule Mejora.Importer do
 
         data
         |> Stream.with_index()
-        |> Stream.map(&schema.embedded_changeset/1)
+        |> Stream.map(fn indexed_changeset ->
+          [worksheet_name, schema.embedded_changeset(indexed_changeset)]
+        end)
       end)
       |> Stream.flat_map(fn inner_stream -> inner_stream end)
-      |> Enum.reduce(%{valid: [], errors: struct(SpreadsheetErrors)}, &accumulate_results/2)
+      |> Enum.reduce(%{valid: [], errors: struct(SpreadsheetErrors)}, fn [
+                                                                           worksheet_name,
+                                                                           changeset
+                                                                         ],
+                                                                         acc ->
+        accumulate_results(changeset, acc, worksheet_name)
+      end)
       |> handle_results()
     end)
   end
 
-  defp accumulate_results(%{valid?: true} = changeset, acc),
+  defp accumulate_results(%{valid?: true} = changeset, acc, _worksheet_name),
     do: %{valid: [Ecto.Changeset.apply_changes(changeset) | acc.valid], errors: acc.errors}
 
-  defp accumulate_results(changeset, acc),
-    do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors)}
+  defp accumulate_results(changeset, acc, worksheet_name),
+    do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors, worksheet_name)}
 
   defp handle_results(%{
          valid: valid_records,
@@ -109,20 +121,20 @@ defmodule Mejora.Importer do
        })
        when global == [] and rows == %{} do
     Enum.each(valid_records, &create_record(&1))
-    valid_records
+    {:ok, valid_records}
   end
 
   defp handle_results(%{errors: errors}) do
-    IO.inspect(errors)
     Repo.rollback(errors)
   end
 
   defp process_errors(
          %Ecto.Changeset{changes: data, errors: errors} = _changeset,
-         spreadsheet_errors
+         spreadsheet_errors,
+         worksheet_name
        ) do
     error_message = Mejora.Ecto.Helpers.translate_errors_to_string(errors)
-    SpreadsheetErrors.add_row_error(spreadsheet_errors, data.index, error_message)
+    SpreadsheetErrors.add_row_error(spreadsheet_errors, data.index, error_message, worksheet_name)
   end
 
   def do_truncate do

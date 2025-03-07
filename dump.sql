@@ -9,8 +9,8 @@ INSERT INTO "public"."neighborhoods" VALUES (1, 'Residencial 15 de Mayo II', 'Fr
 --
 -- QUOTAS
 --
-INSERT INTO "public"."quotas" ("id", "amount", "start_date", "end_date", "status", "comments", "neighborhood_id", "inserted_at", "updated_at") VALUES (1, 200, '2020-01-01', '2024-05-01', 'inactive', 'Cuota inicial', 34, '2025-03-07 16:59:22', '2025-03-07 16:59:22');
-INSERT INTO "public"."quotas" ("id", "amount", "start_date", "end_date", "status", "comments", "neighborhood_id", "inserted_at", "updated_at") VALUES (2, 350, '2024-06-01', NULL, 'active', NULL, 34, '2025-03-07 16:59:22', '2025-03-07 16:59:22');
+INSERT INTO "public"."quotas" ("id", "amount", "start_date", "end_date", "status", "comments", "neighborhood_id", "inserted_at", "updated_at") VALUES (1, 200, '2020-01-01', '2024-05-01', 'inactive', 'Cuota inicial', 1, '2025-03-07 16:59:22', '2025-03-07 16:59:22');
+INSERT INTO "public"."quotas" ("id", "amount", "start_date", "end_date", "status", "comments", "neighborhood_id", "inserted_at", "updated_at") VALUES (2, 350, '2024-06-01', NULL, 'active', NULL, 1, '2025-03-07 16:59:22', '2025-03-07 16:59:22');
 
 --
 -- BOARDS
@@ -87,6 +87,7 @@ INSERT INTO "public"."providers" ("id", "name", "legal_name", "rfc", "street", "
 INSERT INTO "public"."providers" ("id", "name", "legal_name", "rfc", "street", "service", "inserted_at", "updated_at") VALUES (7, 'Axtel', 'Axtel', NULL, NULL, 'Telefonía e Internet', '2024-11-22', '2024-11-22');
 INSERT INTO "public"."providers" ("id", "name", "legal_name", "rfc", "street", "service", "inserted_at", "updated_at") VALUES (8, 'Green Garden', NULL, NULL, NULL, NULL, '2024-11-22', '2024-11-22');
 INSERT INTO "public"."providers" ("id", "name", "legal_name", "rfc", "street", "service", "inserted_at", "updated_at") VALUES (9, 'Izzi', 'Izzi', NULL, NULL, 'Telefonía e Internet', '2024-11-22', '2024-11-22');
+INSERT INTO "public"."providers" ("id", "name", "legal_name", "rfc", "street", "service", "inserted_at", "updated_at") VALUES (10, 'Gasto General', 'Gasto General', NULL, NULL, 'Gasto General', '2024-11-22', '2024-11-22');
 
 --
 -- USERS

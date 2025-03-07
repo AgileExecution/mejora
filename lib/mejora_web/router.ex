@@ -37,7 +37,6 @@ defmodule MejoraWeb.Router do
       live "/projects", Live.Projects
       live "/billing", Live.Billing
       live "/properties", Live.AdminProperties
-      # live "/payments", Live.AdminPaymentView
     end
   end
 
@@ -93,6 +92,9 @@ defmodule MejoraWeb.Router do
       live "/users/board", Live.UserBoard, :edit
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      live "/users/account_statement", Live.AccountStatement
+      live "/users/debts_and_receipts", Live.UserDebtsAndReceipts
+      live "/users/debts_and_receipts/:id", Live.UserReceipt
     end
   end
 
@@ -105,7 +107,6 @@ defmodule MejoraWeb.Router do
       on_mount: [{MejoraWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
-      live "/users/account_statement", Live.AccountStatement
       live "/admin/payments", Live.AdminPaymentView
     end
   end

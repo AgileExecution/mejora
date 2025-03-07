@@ -1,0 +1,54 @@
+<h3 class="black-title montserrat-font w-full text-center">
+  Adeudos y Comprobantes de Pago
+</h3>
+
+<article class="article-section white-border montserrat-font">
+  <p class="blue-title m-0">
+    Cuota de Mtto
+  </p>
+  <ul class="vertical-article-list font-thin font-system-ui opacity-50">
+    <li>Emision: {@quota.start_date}</li>
+    <li>Vencimiento: {@quota.end_date}</li>
+  </ul>
+  <ul class="vertical-article-list font-bold">
+    <li>Importe: {currency(@quota.incoming)}</li>
+    <li>Pagado: {currency(@quota.payed)}</li>
+    <li>Pendiente: {currency(@quota.pending)}</li>
+  </ul>
+</article>
+
+<section class="article-section mb-20">
+  <h3 class="payment-title">
+    Total de Adeudos: {length(@quotas)}
+  </h3>
+  <p class="border-box-v2 text-center text-2xl blue-color font-semibold">
+    {pending_sum(@quotas)}
+  </p>
+</section>
+
+<%= for quota <- @quotas do %>
+  <section class="article-section">
+    <h3 class="payment-title">
+      Notificacion de Pago
+    </h3>
+    <ul class="border-box-v2 article-list">
+      <li>
+        <.link class="link-label" href={~p"/users/debts_and_receipts/#{quota.id}"}>
+          Folio: {quota.id}
+        </.link>
+      </li>
+      <li>Concepto: {quota.concept}</li>
+      <li>Importe del Adeudo: {currency(quota.incoming)}</li>
+      <li>Fecha de Emision: {quota.start_date}</li>
+      <li>Fecha de Vencimiento: {quota.end_date}</li>
+      <li>Importe Pagado: {currency(quota.payed)}</li>
+      <li>Importe Pendiente: {currency(quota.pending)}</li>
+    </ul>
+  </section>
+<% end %>
+
+<section class="article-section flex flex-col">
+  <button class="button">Pagar con Tarjeta</button>
+  <button class="button bkg-green">Notificar Pago</button>
+  <button class="button bkg-light-blue">Ver Pagos del Adeudo</button>
+</section>

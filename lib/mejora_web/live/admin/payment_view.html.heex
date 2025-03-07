@@ -22,28 +22,33 @@
       />
     </button>
   </section>
-  <section>
+
+  <section style="overflow:auto; margin-bottom:20px; scrollbar-width: thin;">
     <table class="main-table montserrat-font">
       <tbody>
         <tr>
           <td>Calle</td>
           <td>Numero</td>
-          <%= for month <- @content.table.months do %>
+          <%= for month <- @months do %>
             <td>{month}</td>
           <% end %>
         </tr>
 
-        <%= for data <- @content.table.content do %>
+        <%= for data <- @table_content do %>
           <tr>
             <td>{data.street}</td>
             <td>{data.number}</td>
 
-            <%= for month <- @content.table.months do %>
-              <td>
+            <%= for month <- @months do %>
+              <td
+                style="cursor:pointer"
+                phx-click="selected-input"
+                phx-value-identifier={"#{data.id}_#{month}"}
+              >
                 <input
                   class="green-type"
                   type="checkbox"
-                  checked={Enum.member?(data.payed_months, month)}
+                  checked={Map.get(@month_grid, "#{data.id}_#{month}").paid}
                 />
               </td>
             <% end %>
@@ -51,5 +56,31 @@
         <% end %>
       </tbody>
     </table>
+  </section>
+
+  <section>
+    <span class="flex flex-row justify-end">
+      <button style="margin:0px; width:min-content" class="button montserrat-font outlined">
+        Comentarios Tesorero
+      </button>
+      <button
+        style="margin:0px; width:min-content"
+        class="button montserrat-font"
+        phx-click="submit"
+      >
+        Tesorero Autoriza
+      </button>
+    </span>
+    <form>
+      <p><b>Comments from: </b>{@focused_on}</p>
+      <textarea
+        id="comment-area"
+        phx-change="update_text"
+        name="comment-area"
+        style="width:100%; margin-top:10px"
+      >
+        <%= @selected_input.comments %>
+      </textarea>
+    </form>
   </section>
 </section>

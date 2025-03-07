@@ -1219,8 +1219,6 @@ INSERT INTO "public"."purchase_notices" (id, inserted_at, updated_at, due_date, 
 --
 -- PROPERTY MEMBERSHIPS
 --
-INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (1, 2, 1, 'owner', '2025-03-06', '2025-03-06');
-INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (2, 2, 1, 'resident', '2025-03-06', '2025-03-06');
 INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (3, 3, 2, 'owner', '2025-03-06', '2025-03-06');
 INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (4, 3, 2, 'resident', '2025-03-06', '2025-03-06');
 INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (5, 4, 3, 'owner', '2025-03-06', '2025-03-06');
@@ -1233,6 +1231,8 @@ INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, ins
 INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (12, 8, 6, 'resident', '2025-03-06', '2025-03-06');
 INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (13, 9, 7, 'owner', '2025-03-06', '2025-03-06');
 INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (14, 9, 7, 'resident', '2025-03-06', '2025-03-06');
+INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (15, 1, 1, 'owner', '2025-03-06', '2025-03-06');
+INSERT INTO "public"."property_memberships" (id, user_id, property_id, role, inserted_at, updated_at) VALUES (16, 1, 1, 'resident', '2025-03-06', '2025-03-06');
 
 --
 -- BOARD MEMBERSHIPS

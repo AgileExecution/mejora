@@ -3,17 +3,18 @@ defmodule MejoraWeb.Live.UserReceipt do
   import Ecto.Query
 
   alias Mejora.Repo
-  alias Mejora.Neighborhoods.Quota
   alias Mejora.Transactions.PaymentNotice
 
   def mount(params, _session, socket) do
     payment_id = params["id"] |> Integer.parse() |> elem(0)
+
     payment =
       PaymentNotice
       |> where(id: ^payment_id)
       |> Repo.one()
 
     payed = 0
+
     quota = %{
       id: payment.id,
       concept: "General",

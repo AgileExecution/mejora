@@ -6,8 +6,9 @@ defmodule MejoraWeb.Live.UserDebtsAndReceipts do
   alias Mejora.Neighborhoods.Quota
   alias Mejora.Transactions.PaymentNotice
 
-  def mount(_params, _session,  %{assigns: %{current_user: current_user}} = socket) do
+  def mount(_params, _session, %{assigns: %{current_user: current_user}} = socket) do
     quota = Quota |> Repo.get_by(status: :active)
+
     debts =
       current_user
       |> get_payment_notice_from_user()

@@ -13,7 +13,7 @@
 alias Mejora.Repo
 alias Ecto.Adapters.SQL
 
-sql = File.read!("/dump.sql")
+sql = File.read!("dump.sql")
 
 sql
 |> String.split(";", trim: true)

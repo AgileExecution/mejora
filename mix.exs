@@ -29,7 +29,7 @@ defmodule Mejora.MixProject do
           include_erts: true,
           include_executables_for: [:unix],
           steps: [:assemble, :tar],
-          extra_files: ["priv/repo/seeds.exs"]
+          extra_files: ["lib/mejora/dump.sql"]
         ]
       ]
     ]

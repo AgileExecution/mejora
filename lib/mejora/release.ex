@@ -4,6 +4,7 @@ defmodule Mejora.Release do
   installed.
   """
   @app :mejora
+  @start_apps [:logger, :ssl, :postgrex, :ecto]
 
   def migrate do
     load_app()
@@ -23,7 +24,16 @@ defmodule Mejora.Release do
   end
 
   defp load_app do
-    Application.load(@app)
+    IO.puts "Loading mejora..."
+    :ok = Application.load(@app)
+
+    IO.puts "Starting dependencies..."
+    Enum.each(@start_apps, &Application.ensure_all_started/1)
+
+    IO.puts "Starting repos..."
+    @app
+    |> Application.get_env(:ecto_repos, [])
+    |> Enum.each(&(&1.start_link(pool_size: 1)))
   end
 
   def seed(opts \\ []) do
@@ -44,12 +54,14 @@ defmodule Mejora.Release do
       "users",
       "boards",
       "providers",
-      "invoices",
+      "transactions",
+      "transaction_rows",
+      "payment_notices",
+      "purchase_notices",
       "quotas",
       "board_memberships",
-      "transaction_rows",
-      "transactions",
-      "property_memberships"
+      "property_memberships",
+      "user_tokens"
     ]
     |> Enum.each(fn table ->
       case Mejora.Repo.query("TRUNCATE TABLE #{table} CASCADE") do

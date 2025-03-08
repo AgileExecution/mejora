@@ -67,7 +67,7 @@ defmodule Mejora.Release do
       repo.__adapter__.storage_up(repo.config())
 
       IO.puts("Running migrations...")
-      path = Application.app_dir(:my_app, "priv/repo/migrations")
+      path = Application.app_dir(:mejora, "priv/repo/migrations")
       Ecto.Migrator.run(repo, path, :up, all: true)
 
       IO.puts("Database recreated successfully!")

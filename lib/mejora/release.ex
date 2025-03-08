@@ -29,7 +29,7 @@ defmodule Mejora.Release do
 
     for repo <- repos() do
       if Keyword.get(opts, :reset, true),
-        do: do_truncate()
+        do: do_reset()
 
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
     end

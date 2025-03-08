@@ -55,7 +55,7 @@ defmodule Mejora.Release do
 
     @app
     |> Application.get_env(:ecto_repos, [])
-    |> Enum.each(& &1.start_link(pool_size: 1))
+    |> Enum.each(& &1.start_link(pool_size: 2))
   end
 
   defp do_truncate do

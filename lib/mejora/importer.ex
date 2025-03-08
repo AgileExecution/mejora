@@ -1,15 +1,15 @@
 defmodule Mejora.Importer do
-  alias Ecto.Adapter.Transaction
-
   alias Mejora.{
     Accounts.User,
     Boards.Board,
     Neighborhoods.Neighborhood,
+    Neighborhoods.Quota,
     Properties.Property,
     Providers.Provider,
     Importer.SpreadsheetErrors,
     Repo,
-    Transactions.Transaction
+    Transactions.PaymentNotice,
+    Transactions.PurchaseNotice
   }
 
   def extract_data(path) do
@@ -47,8 +47,8 @@ defmodule Mejora.Importer do
   defp get_worksheet_name(3), do: :people_old
   defp get_worksheet_name(4), do: :people
   defp get_worksheet_name(5), do: :providers
-  defp get_worksheet_name(6), do: :income_transactions
-  defp get_worksheet_name(7), do: :outcome_transactions
+  defp get_worksheet_name(6), do: :payment_notices
+  defp get_worksheet_name(7), do: :purchase_notices
   defp get_worksheet_name(8), do: :quotas
   defp get_worksheet_name(_), do: :unknown
 
@@ -62,8 +62,8 @@ defmodule Mejora.Importer do
       :properties,
       :people,
       :providers,
-      :income_transactions,
-      :outcome_transactions,
+      :payment_notices,
+      :purchase_notices,
       :people_old
     ]
 
@@ -75,10 +75,13 @@ defmodule Mejora.Importer do
         {:people_old, _data} ->
           false
 
-        {:income_transactions, _data} ->
+        {:payment_notices, _data} ->
           false
 
-        {:outcome_transactions, _data} ->
+        {:purchase_notices, _data} ->
+          false
+
+        {:people, _data} ->
           false
 
         _ ->
@@ -90,19 +93,27 @@ defmodule Mejora.Importer do
 
         data
         |> Stream.with_index()
-        |> Stream.map(&schema.embedded_changeset/1)
+        |> Stream.map(fn indexed_changeset ->
+          [worksheet_name, schema.embedded_changeset(indexed_changeset)]
+        end)
       end)
       |> Stream.flat_map(fn inner_stream -> inner_stream end)
-      |> Enum.reduce(%{valid: [], errors: struct(SpreadsheetErrors)}, &accumulate_results/2)
+      |> Enum.reduce(%{valid: [], errors: struct(SpreadsheetErrors)}, fn [
+                                                                           worksheet_name,
+                                                                           changeset
+                                                                         ],
+                                                                         acc ->
+        accumulate_results(changeset, acc, worksheet_name)
+      end)
       |> handle_results()
     end)
   end
 
-  defp accumulate_results(%{valid?: true} = changeset, acc),
+  defp accumulate_results(%{valid?: true} = changeset, acc, _worksheet_name),
     do: %{valid: [Ecto.Changeset.apply_changes(changeset) | acc.valid], errors: acc.errors}
 
-  defp accumulate_results(changeset, acc),
-    do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors)}
+  defp accumulate_results(changeset, acc, worksheet_name),
+    do: %{valid: acc.valid, errors: process_errors(changeset, acc.errors, worksheet_name)}
 
   defp handle_results(%{
          valid: valid_records,
@@ -110,24 +121,36 @@ defmodule Mejora.Importer do
        })
        when global == [] and rows == %{} do
     Enum.each(valid_records, &create_record(&1))
-    valid_records
+    {:ok, valid_records}
   end
 
   defp handle_results(%{errors: errors}) do
-    IO.inspect(errors)
     Repo.rollback(errors)
   end
 
   defp process_errors(
          %Ecto.Changeset{changes: data, errors: errors} = _changeset,
-         spreadsheet_errors
+         spreadsheet_errors,
+         worksheet_name
        ) do
     error_message = Mejora.Ecto.Helpers.translate_errors_to_string(errors)
-    SpreadsheetErrors.add_row_error(spreadsheet_errors, data.index, error_message)
+    SpreadsheetErrors.add_row_error(spreadsheet_errors, data.index, error_message, worksheet_name)
   end
 
   def do_truncate do
-    ["neighborhoods", "properties", "users", "boards", "providers", "transactions"]
+    [
+      "neighborhoods",
+      "properties",
+      "users",
+      "boards",
+      "providers",
+      "transactions",
+      "purchase_notices",
+      "payment_notices",
+      "quotas",
+      "board_memberships",
+      "property_memberships"
+    ]
     |> Enum.each(fn table ->
       case Mejora.Repo.query("TRUNCATE TABLE #{table} CASCADE") do
         {:ok, _result} ->
@@ -144,8 +167,8 @@ defmodule Mejora.Importer do
   defp get_schema(:properties), do: Property
   defp get_schema(:neighborhoods), do: Neighborhood
   defp get_schema(:people), do: User
-  defp get_schema(:income_transactions), do: Transaction
-  defp get_schema(:outcome_transactions), do: Transaction
+  defp get_schema(:payment_notices), do: PaymentNotice
+  defp get_schema(:purchase_notices), do: PurchaseNotice
   defp get_schema(:people_old), do: User
   defp get_schema(:quotas), do: Quota
 

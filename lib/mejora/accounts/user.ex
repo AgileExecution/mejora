@@ -298,7 +298,10 @@ defmodule Mejora.Accounts.User do
 
   defp get_property_memberships(record) do
     property =
-      Repo.get_by(Property, street: Enum.at(record, 1), number: parse_string(Enum.at(record, 2)))
+      Repo.get_by(Property,
+        street: Enum.at(record, 0),
+        number: parse_string(trunc(Enum.at(record, 1)))
+      )
 
     record
     # roles: owner (0), tenant (1), resident (2)

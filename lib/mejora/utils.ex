@@ -21,6 +21,7 @@ defmodule Mejora.Utils do
   def parse_date({_year, _month, _day} = value), do: Timex.to_date(value)
   def parse_date(value) when is_bitstring(value), do: Timex.shift(Timex.now(), months: 12)
   def parse_date(value) when is_integer(value), do: Timex.shift(~D[1900-01-01], days: value)
+  def parse_date(value), do: value
 
   def parse_datetime(nil), do: nil
   def parse_datetime({_year, _month, _day} = value), do: Timex.to_datetime(value)

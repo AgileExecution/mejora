@@ -16,7 +16,7 @@ defmodule Mejora.Importer.SpreadsheetErrors do
   def add_global_error(%SpreadsheetErrors{global: global_errors} = errors, error),
     do: %{errors | global: Enum.uniq([error | global_errors])}
 
-  def add_row_error(%SpreadsheetErrors{rows: row_errors} = errors, index, error)
+  def add_row_error(%SpreadsheetErrors{rows: row_errors} = errors, index, error, worksheet_name)
       when is_binary(error) and byte_size(error) > 0,
       do: %{
         errors
@@ -29,7 +29,7 @@ defmodule Mejora.Importer.SpreadsheetErrors do
             )
       }
 
-  def add_row_error(%SpreadsheetErrors{} = errors, _index, _error), do: errors
+  def add_row_error(%SpreadsheetErrors{} = errors, _index, _error, _worksheet_name), do: errors
 
   defp print_row({error_index, row_error}),
     do: "Row #{to_string(error_index)}: #{to_string(row_error)}"

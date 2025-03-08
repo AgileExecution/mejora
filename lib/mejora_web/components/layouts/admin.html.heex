@@ -1,0 +1,12 @@
+<Backpex.HTML.Layout.app_shell fluid={@fluid?}>
+  <:sidebar>
+    <Backpex.HTML.Layout.sidebar_item
+      current_url={@current_url}
+      navigate={~p"/admin/payment_notices"}
+    >
+      <.icon name="hero-book-open" class="h-5 w-5" /> Payment Notices
+    </Backpex.HTML.Layout.sidebar_item>
+  </:sidebar>
+  <Backpex.HTML.Layout.flash_messages flash={@flash} />
+  {@inner_content}
+</Backpex.HTML.Layout.app_shell>

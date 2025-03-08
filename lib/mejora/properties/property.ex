@@ -32,6 +32,7 @@ defmodule Mejora.Properties.Property do
   end
 
   def embedded_changeset({record, index}) do
+    IO.inspect(record)
     fields = __schema__(:fields) ++ [:index]
 
     attrs =

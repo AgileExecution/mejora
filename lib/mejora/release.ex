@@ -61,10 +61,10 @@ defmodule Mejora.Release do
   defp do_reset do
     for repo <- repos() do
       IO.puts("Dropping database...")
-      repo.__adapter__.storage_down(repo.config())
+      repo.__adapter__().storage_down(repo.config())
 
       IO.puts("Creating database...")
-      repo.__adapter__.storage_up(repo.config())
+      repo.__adapter__().storage_up(repo.config())
 
       IO.puts("Running migrations...")
       path = Application.app_dir(:mejora, "priv/repo/migrations")

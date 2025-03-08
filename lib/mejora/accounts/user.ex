@@ -5,6 +5,7 @@ defmodule Mejora.Accounts.User do
   import Mejora.Utils
   import Ecto.Query
 
+  alias Mejora.Boards.{Board, BoardMembership}
   alias Mejora.Properties.{Property, PropertyMembership}
   alias Mejora.Repo
   alias __MODULE__, as: User
@@ -26,6 +27,9 @@ defmodule Mejora.Accounts.User do
 
     has_many :property_memberships, PropertyMembership
     has_many :properties, through: [:property_memberships, :property]
+
+    has_many :board_memberships, BoardMembership
+    has_many :boards, through: [:board_memberships, :board]
 
     timestamps(type: :utc_datetime)
   end
@@ -68,6 +72,13 @@ defmodule Mejora.Accounts.User do
     ])
     |> validate_email(opts)
     |> validate_password(opts)
+    |> validate_required([:role])
+    |> validate_inclusion(:role, ["admin", "bystander", "user"])
+  end
+
+  def role_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:role])
     |> validate_required([:role])
     |> validate_inclusion(:role, ["admin", "bystander", "user"])
   end

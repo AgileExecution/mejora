@@ -12,11 +12,29 @@ defmodule Mejora.Release do
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
+
+    stop()
   end
 
   def rollback(repo, version) do
     load_app()
+
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+
+    stop()
+  end
+
+  def seed(opts \\ []) do
+    load_app()
+
+    for repo <- repos() do
+      if Keyword.get(opts, :truncate, false),
+        do: do_truncate()
+
+      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
+    end
+
+    stop()
   end
 
   defp repos do
@@ -34,17 +52,6 @@ defmodule Mejora.Release do
     @app
     |> Application.get_env(:ecto_repos, [])
     |> Enum.each(&(&1.start_link(pool_size: 1)))
-  end
-
-  def seed(opts \\ []) do
-    load_app()
-
-    for repo <- repos() do
-      if Keyword.get(opts, :truncate, false),
-        do: do_truncate()
-
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
-    end
   end
 
   defp do_truncate do
@@ -87,5 +94,10 @@ defmodule Mejora.Release do
     repo_otp_app = repo.config()[:otp_app]
     app_path = Application.app_dir(repo_otp_app)
     Path.join([app_path, "priv/repo", filename])
+  end
+
+  defp stop do
+    IO.puts "Success!"
+    :init.stop()
   end
 end

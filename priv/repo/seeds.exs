@@ -14,7 +14,7 @@ alias Mejora.Repo
 alias Ecto.Adapters.SQL
 
 file_path = Path.join(:code.priv_dir(:mejora), "repo/dump.sql")
-sql = File.read!(file_apth)
+sql = File.read!(file_path)
 
 sql
 |> String.split(";", trim: true)

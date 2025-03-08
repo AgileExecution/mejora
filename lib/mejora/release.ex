@@ -42,16 +42,20 @@ defmodule Mejora.Release do
   end
 
   defp load_app do
-    IO.puts "Loading mejora..."
-    :ok = Application.load(@app)
+    IO.puts("Loading mejora...")
 
-    IO.puts "Starting dependencies..."
+    unless Enum.any?(Application.loaded_applications(), fn {name, _, _} -> name == @app end) do
+      :ok = Application.load(@app)
+    end
+
+    IO.puts("Starting dependencies...")
     Enum.each(@start_apps, &Application.ensure_all_started/1)
 
-    IO.puts "Starting repos..."
+    IO.puts("Starting repos...")
+
     @app
     |> Application.get_env(:ecto_repos, [])
-    |> Enum.each(&(&1.start_link(pool_size: 1)))
+    |> Enum.each(& &1.start_link(pool_size: 1))
   end
 
   defp do_truncate do
@@ -97,7 +101,7 @@ defmodule Mejora.Release do
   end
 
   defp stop do
-    IO.puts "Success!"
+    IO.puts("Success!")
     :init.stop()
   end
 end

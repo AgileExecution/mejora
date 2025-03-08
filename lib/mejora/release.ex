@@ -4,6 +4,7 @@ defmodule Mejora.Release do
   installed.
   """
   @app :mejora
+  @start_apps [:logger, :ssl, :postgrex, :ecto]
 
   def migrate do
     load_app()
@@ -11,11 +12,29 @@ defmodule Mejora.Release do
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
+
+    stop()
   end
 
   def rollback(repo, version) do
     load_app()
+
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+
+    stop()
+  end
+
+  def seed(opts \\ []) do
+    load_app()
+
+    for repo <- repos() do
+      if Keyword.get(opts, :reset, true),
+        do: do_reset()
+
+      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
+    end
+
+    stop()
   end
 
   defp repos do
@@ -23,43 +42,36 @@ defmodule Mejora.Release do
   end
 
   defp load_app do
-    Application.load(@app)
-  end
+    IO.puts("Loading mejora...")
 
-  def seed(opts \\ []) do
-    load_app()
-
-    for repo <- repos() do
-      if Keyword.get(opts, :truncate, false),
-        do: do_truncate()
-
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &seed_repo/1)
+    unless Enum.any?(Application.loaded_applications(), fn {name, _, _} -> name == @app end) do
+      :ok = Application.load(@app)
     end
+
+    IO.puts("Starting dependencies...")
+    Enum.each(@start_apps, &Application.ensure_all_started/1)
+
+    IO.puts("Starting repos...")
+
+    @app
+    |> Application.get_env(:ecto_repos, [])
+    |> Enum.each(& &1.start_link(pool_size: 2))
   end
 
-  defp do_truncate do
-    [
-      "neighborhoods",
-      "properties",
-      "users",
-      "boards",
-      "providers",
-      "invoices",
-      "quotas",
-      "board_memberships",
-      "transaction_rows",
-      "transactions",
-      "property_memberships"
-    ]
-    |> Enum.each(fn table ->
-      case Mejora.Repo.query("TRUNCATE TABLE #{table} CASCADE") do
-        {:ok, _result} ->
-          IO.puts("#{table} table truncated successfully.")
+  defp do_reset do
+    for repo <- repos() do
+      IO.puts("Dropping database...")
+      repo.__adapter__.storage_down(repo.config())
 
-        {:error, reason} ->
-          IO.puts("Failed to truncate #{table} table: #{inspect(reason)}")
-      end
-    end)
+      IO.puts("Creating database...")
+      repo.__adapter__.storage_up(repo.config())
+
+      IO.puts("Running migrations...")
+      path = Application.app_dir(:mejora, "priv/repo/migrations")
+      Ecto.Migrator.run(repo, path, :up, all: true)
+
+      IO.puts("Database recreated successfully!")
+    end
   end
 
   defp seed_repo(repo) do
@@ -75,5 +87,10 @@ defmodule Mejora.Release do
     repo_otp_app = repo.config()[:otp_app]
     app_path = Application.app_dir(repo_otp_app)
     Path.join([app_path, "priv/repo", filename])
+  end
+
+  defp stop do
+    IO.puts("Success!")
+    :init.stop()
   end
 end

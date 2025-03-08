@@ -23,14 +23,6 @@ defmodule Mejora.MixProject do
         plt_core_path: ".dialyzer_cache/",
         plt_local_path: ".dialyzer_cache/",
         plt_file: {:no_warn, ".dialyzer_cache/mejora.plt"}
-      ],
-      releases: [
-        mejora: [
-          include_erts: true,
-          include_executables_for: [:unix],
-          steps: [:assemble, :tar],
-          extra_files: ["lib/mejora/dump.sql"]
-        ]
       ]
     ]
   end
